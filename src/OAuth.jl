@@ -80,7 +80,7 @@ const OA_PLAINTEXT = (uint32)(2)
 ########################################################################################
 #
 #
-#	Functions - According to documentation, Clang.jl didn't generate all functions
+#	Functions
 #
 #
 ########################################################################################
@@ -121,23 +121,26 @@ function oauth_sign_plaintext(message::String,key::String)
     return bytestring(result)
 end
 
-function oauth_sign_rsa_sha1(m::Ptr{Uint8},k::Ptr{Uint8})
-    result = ccall((:oauth_sign_rsa_sha1,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},Ptr{Uint8}),m,k)
+#Only modified argument names & types
+function oauth_sign_rsa_sha1(message::String,key::String)
+    result = ccall((:oauth_sign_rsa_sha1,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},Ptr{Uint8}),message,key)
     if result == C_NULL
         error("oauth_sign_rsa_sha1 failed")
     end
     return bytestring(result)
 end
 
-function oauth_verify_rsa_sha1(m::Ptr{Uint8},c::Ptr{Uint8},s::Ptr{Uint8})
-    result = ccall((:oauth_verify_rsa_sha1,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Uint8},Ptr{Uint8}),m,c,s)
+#Only modified argument names & types
+function oauth_verify_rsa_sha1(message::String,certificate::String,signature::String)
+    result = ccall((:oauth_verify_rsa_sha1,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Uint8},Ptr{Uint8}),message,certificate,signature)
     if result == C_NULL
         error("oauth_verify_rsa_sha1 failed")
     end
     return bytestring(result)
 end
 
-function oauth_split_url_parameters(url::Ptr{Uint8},argv::Ptr{Ptr{Ptr{Uint8}}})
+#Only modified url type. How do you specific string array type in second argument?
+function oauth_split_url_parameters(url::String,argv::Ptr{Ptr{Ptr{Uint8}}})
     result = ccall((:oauth_split_url_parameters,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Ptr{Ptr{Uint8}}}),url,argv)
     if result == C_NULL
         error("oauth_split_url_parameters failed")
@@ -145,15 +148,17 @@ function oauth_split_url_parameters(url::Ptr{Uint8},argv::Ptr{Ptr{Ptr{Uint8}}})
     return bytestring(result)
 end
 
-function oauth_split_post_parameters(url::Ptr{Uint8},argv::Ptr{Ptr{Ptr{Uint8}}},qesc::Int16)
-    result = ccall((:oauth_split_post_paramters,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Ptr{Ptr{Uint8}}},Int16),url,argv,qesc)
+#Modified url and qesc types. How do you specific string array type in second argument?
+function oauth_split_post_parameters(url::String,argv::Ptr{Ptr{Ptr{Uint8}}},usequeryescape::Integer)
+    result = ccall((:oauth_split_post_paramters,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Ptr{Ptr{Uint8}}},Int16),url,argv,usequeryescape)
     if result == C_NULL
         error("oauth_split_post_paramters failed")
     end
     return bytestring(result)
 end
 
-function oauth_serialize_url(argc::Cint,start::Cint,argv::Ptr{Ptr{Uint8}})
+#Modified first two types. Should argc be moved inside function, it is total number of elements in array?
+function oauth_serialize_url(argc::Integer,start::Integer,argv::Ptr{Ptr{Uint8}})
     result = ccall((:oauth_serialize_url,LIBOAUTH),Ptr{Uint8},(Cint,Cint,Ptr{Ptr{Uint8}}),argc,start,argv)
     if result == C_NULL
         error("oauth_serialize_url failed")
@@ -161,7 +166,8 @@ function oauth_serialize_url(argc::Cint,start::Cint,argv::Ptr{Ptr{Uint8}})
     return bytestring(result)
 end
 
-function oauth_serialize_url_sep(argc::Cint,start::Cint,argv::Ptr{Ptr{Uint8}},sep::Ptr{Uint8},mod::Cint)
+#Modified for Integer type
+function oauth_serialize_url_sep(argc::Integer,start::Interger,argv::Ptr{Ptr{Uint8}},sep::Ptr{Uint8},mod::Integer)
     result = ccall((:oauth_serialize_url_sep,LIBOAUTH),Ptr{Uint8},(Cint,Cint,Ptr{Ptr{Uint8}},Ptr{Uint8},Cint),argc,start,argv,sep,mod)
     if result == C_NULL
         error("oauth_serialize_url_sep failed")
@@ -169,7 +175,8 @@ function oauth_serialize_url_sep(argc::Cint,start::Cint,argv::Ptr{Ptr{Uint8}},se
     return bytestring(result)
 end
 
-function oauth_serialize_url_parameters(argc::Cint,argv::Ptr{Ptr{Uint8}})
+#Modified for Integer type
+function oauth_serialize_url_parameters(argc::Integer,argv::Ptr{Ptr{Uint8}})
     result = ccall((:oauth_serialize_url_parameters,LIBOAUTH),Ptr{Uint8},(Cint,Ptr{Ptr{Uint8}}),argc,argv)
     if result == C_NULL
         error("oauth_serialize_url_parameters")
@@ -177,6 +184,7 @@ function oauth_serialize_url_parameters(argc::Cint,argv::Ptr{Ptr{Uint8}})
     return bytestring(result)
 end
 
+#What is use case to compare two strings for OAuth? Is this if you're building an API?
 function oauth_cmpstringp(p1::Ptr{Void},p2::Ptr{Void})
     result = ccall((:oauth_cmpstringp,LIBOAUTH),Cint,(Ptr{Void},Ptr{Void}),p1,p2)
     if result == C_NULL
@@ -185,7 +193,8 @@ function oauth_cmpstringp(p1::Ptr{Void},p2::Ptr{Void})
     return bytestring(result)
 end
 
-function oauth_param_exists(argv::Ptr{Ptr{Uint8}},argc::Cint,key::Ptr{Uint8})
+#Switched type to Integer and String. Like above, if argv just length of array, should we move inside function?
+function oauth_param_exists(argv::Ptr{Ptr{Uint8}},argc::Integer,key::String)
     result = ccall((:oauth_param_exists,LIBOAUTH),Cint,(Ptr{Ptr{Uint8}},Cint,Ptr{Uint8}),argv,argc,key)
     if result == C_NULL
         error("oauth_param_exists failed")
@@ -193,6 +202,7 @@ function oauth_param_exists(argv::Ptr{Ptr{Uint8}},argc::Cint,key::Ptr{Uint8})
     return bytestring(result)
 end
 
+#Like above, if argcp just length of array, should we move inside function?
 function oauth_add_param_to_array(argcp::Ptr{Cint},argvp::Ptr{Ptr{Ptr{Uint8}}},addparam::Ptr{Uint8})
     result = ccall((:oauth_add_param_to_array,LIBOAUTH),Void,(Ptr{Cint},Ptr{Ptr{Ptr{Uint8}}},Ptr{Uint8}),argcp,argvp,addparam)
     if result == C_NULL
@@ -201,6 +211,7 @@ function oauth_add_param_to_array(argcp::Ptr{Cint},argvp::Ptr{Ptr{Ptr{Uint8}}},a
     return bytestring(result)
 end
 
+#Is this necessary? We don't need to worry about freeing memory, right?
 function oauth_free_array(argcp::Ptr{Cint},argvp::Ptr{Ptr{Ptr{Uint8}}})
     result = ccall((:oauth_free_array,LIBOAUTH),Void,(Ptr{Cint},Ptr{Ptr{Ptr{Uint8}}}),argcp,argvp)
     if result == C_NULL
@@ -209,6 +220,7 @@ function oauth_free_array(argcp::Ptr{Cint},argvp::Ptr{Ptr{Ptr{Uint8}}})
     return bytestring(result)
 end
 
+#Is this necessary? Comparing two strings in constant time? Or is this if you're building an API? 
 function oauth_time_independent_equals_n(a::Ptr{Uint8},b::Ptr{Uint8},len_a::Cint,len_b::Cint)
     result = ccall((:oauth_time_independent_equals_n,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Uint8},Cint,Cint),a,b,len_a,len_b)
     if result == C_NULL
@@ -217,6 +229,8 @@ function oauth_time_independent_equals_n(a::Ptr{Uint8},b::Ptr{Uint8},len_a::Cint
     return bytestring(result)
 end
 
+#Is this necessary? Comparing two strings in constant time? Or is this if you're building an API? 
+#Docs say 'wrapper to oauth_time_independent_equals_n which calls strlen() for each argument', so we don't need both, right? (if any at all)
 function oauth_time_independent_equals(a::Ptr{Uint8},b::Ptr{Uint8})
     result = ccall((:oauth_time_independent_equals,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Uint8}),a,b)
     if result == C_NULL
@@ -225,6 +239,8 @@ function oauth_time_independent_equals(a::Ptr{Uint8},b::Ptr{Uint8})
     return bytestring(result)
 end
 
+#Instead of typealias for 'method', should we just make this a string?
+#Pretty sure this is the MAIN function to make any API calls
 function oauth_sign_url2(url::Ptr{Uint8},postargs::Ptr{Ptr{Uint8}},method::OAuthMethod,http_method::Ptr{Uint8},c_key::Ptr{Uint8},c_secret::Ptr{Uint8},t_key::Ptr{Uint8},t_secret::Ptr{Uint8})
     result = ccall((:oauth_sign_url2,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},Ptr{Ptr{Uint8}},OAuthMethod,Ptr{Uint8},Ptr{Uint8},Ptr{Uint8},Ptr{Uint8},Ptr{Uint8}),url,postargs,method,http_method,c_key,c_secret,t_key,t_secret)
     if result == C_NULL
