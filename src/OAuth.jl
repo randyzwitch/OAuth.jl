@@ -48,6 +48,11 @@ oauth_sign_plaintext #,
 #oauth_body_hash_data,
 #oauth_body_hash_encode,
 #oauth_sign_xmpp
+#oauth_encode_base64
+#oauth_decode_base64
+#oauth_url_escape
+#oauth_url_unescape
+#oauth_catenc
 
 # begin enum ANONYMOUS_1
 typealias ANONYMOUS_1 Uint32
@@ -274,6 +279,26 @@ function oauth_sign_xmpp(xml::Ptr{Uint8},method::OAuthMethod,c_secret::Ptr{Uint8
         error("oauth_sign_xmpp failed")
     end
     return bytestring(result)
+end
+
+function oauth_encode_base64()
+    error("Not yet implemented")
+end
+
+function oauth_decode_base64()
+    error("Not yet implemented")
+end
+
+function oauth_url_escape()
+    error("Not yet implemented")
+end
+
+function oauth_url_unescape()
+    error("Not yet implemented")
+end
+
+function oauth_catenc()
+    error("Not yet implemented")
 end
 
 end # module
