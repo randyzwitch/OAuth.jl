@@ -24,9 +24,10 @@ module OAuth
 ########################################################################################
 
 export 
-oauth_sign_hmac_sha1  #,
-#oauth_sign_hmac_sha1_raw,
-#oauth_sign_plaintext,
+oauth_gen_nonce,
+oauth_sign_hmac_sha1,
+oauth_sign_hmac_sha1_raw,
+oauth_sign_plaintext #,
 #oauth_sign_rsa_sha1,
 #oauth_verify_rsa_sha1,
 #oauth_split_url_parameters,
@@ -74,11 +75,21 @@ const OA_PLAINTEXT = (uint32)(2)
 ########################################################################################
 #
 #
-#	Functions
+#	Functions - According to documentation, Clang.jl didn't generate all functions
 #
 #
 ########################################################################################
 
+#Seems correct, returns random string
+function oauth_gen_nonce()
+    result = ccall((:oauth_gen_nonce,LIBOAUTH),Ptr{Uint8},())
+    if result == C_NULL
+        error("oauth_gen_nonce failed")
+    end
+    return bytestring(result)
+end
+
+#Should be correct
 function oauth_sign_hmac_sha1(url::String,key::String)
     result = ccall((:oauth_sign_hmac_sha1,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},Ptr{Uint8}),url,key)
     if result == C_NULL
@@ -87,16 +98,18 @@ function oauth_sign_hmac_sha1(url::String,key::String)
     return bytestring(result)
 end
 
-function oauth_sign_hmac_sha1_raw(m::Ptr{Uint8},ml::Cint,k::Ptr{Uint8},kl::Cint)
-    result = ccall((:oauth_sign_hmac_sha1_raw,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},Cint,Ptr{Uint8},Cint),m,ml,k,kl)
+#Is this right? Do I need to convert the first Ptr{Uint8} in ccall to String type?
+function oauth_sign_hmac_sha1_raw(message::String,messagelength::Integer,key::String,keylength::Integer)
+    result = ccall((:oauth_sign_hmac_sha1_raw,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},Cint,Ptr{Uint8},Cint),message,messagelength,key,keylength)
     if result == C_NULL
         error("oauth_sign_hmac_sha1_raw failed")
     end
     return bytestring(result)
 end
 
-function oauth_sign_plaintext(m::Ptr{Uint8},k::Ptr{Uint8})
-    result = ccall((:oauth_sign_plaintext,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},Ptr{Uint8}),m,k)
+#Is this right? Not sure of value of this function, if it just returns the key value
+function oauth_sign_plaintext(message::String,key::String)
+    result = ccall((:oauth_sign_plaintext,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},Ptr{Uint8}),message,key)
     if result == C_NULL
         error("oauth_sign_plaintext failed")
     end
@@ -199,13 +212,6 @@ function oauth_time_independent_equals_n(a::Ptr{Uint8},b::Ptr{Uint8},len_a::Cint
     return bytestring(result)
 end
 
-#Deprecated
-#=
-function oauth_time_indepenent_equals_n(a::Ptr{Uint8},b::Ptr{Uint8},len_a::Cint,len_b::Cint)
-    ccall((:oauth_time_indepenent_equals_n,liboauth),Cint,(Ptr{Uint8},Ptr{Uint8},Cint,Cint),a,b,len_a,len_b)
-end
-=#
-
 function oauth_time_independent_equals(a::Ptr{Uint8},b::Ptr{Uint8})
     result = ccall((:oauth_time_independent_equals,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Uint8}),a,b)
     if result == C_NULL
@@ -214,13 +220,6 @@ function oauth_time_independent_equals(a::Ptr{Uint8},b::Ptr{Uint8})
     return bytestring(result)
 end
 
-#Deprecated
-#=
-function oauth_time_indepenent_equals(a::Ptr{Uint8},b::Ptr{Uint8})
-    ccall((:oauth_time_indepenent_equals,liboauth),Cint,(Ptr{Uint8},Ptr{Uint8}),a,b)
-end
-=#
-
 function oauth_sign_url2(url::Ptr{Uint8},postargs::Ptr{Ptr{Uint8}},method::OAuthMethod,http_method::Ptr{Uint8},c_key::Ptr{Uint8},c_secret::Ptr{Uint8},t_key::Ptr{Uint8},t_secret::Ptr{Uint8})
     result = ccall((:oauth_sign_url2,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},Ptr{Ptr{Uint8}},OAuthMethod,Ptr{Uint8},Ptr{Uint8},Ptr{Uint8},Ptr{Uint8},Ptr{Uint8}),url,postargs,method,http_method,c_key,c_secret,t_key,t_secret)
     if result == C_NULL
@@ -228,12 +227,6 @@ function oauth_sign_url2(url::Ptr{Uint8},postargs::Ptr{Ptr{Uint8}},method::OAuth
     end
     return bytestring(result)
 end
-
-#Deprecated
-#=function oauth_sign_url(url::Ptr{Uint8},postargs::Ptr{Ptr{Uint8}},method::OAuthMethod,c_key::Ptr{Uint8},c_secret::Ptr{Uint8},t_key::Ptr{Uint8},t_secret::Ptr{Uint8})
-    ccall((:oauth_sign_url,liboauth),Ptr{Uint8},(Ptr{Uint8},Ptr{Ptr{Uint8}},OAuthMethod,Ptr{Uint8},Ptr{Uint8},Ptr{Uint8},Ptr{Uint8}),url,postargs,method,c_key,c_secret,t_key,t_secret)
-end
-=#
 
 function oauth_sign_array2_process(argcp::Ptr{Cint},argvp::Ptr{Ptr{Ptr{Uint8}}},postargs::Ptr{Ptr{Uint8}},method::OAuthMethod,http_method::Ptr{Uint8},c_key::Ptr{Uint8},c_secret::Ptr{Uint8},t_key::Ptr{Uint8},t_secret::Ptr{Uint8})
     result = ccall((:oauth_sign_array2_process,LIBOAUTH),Void,(Ptr{Cint},Ptr{Ptr{Ptr{Uint8}}},Ptr{Ptr{Uint8}},OAuthMethod,Ptr{Uint8},Ptr{Uint8},Ptr{Uint8},Ptr{Uint8},Ptr{Uint8}),argcp,argvp,postargs,method,http_method,c_key,c_secret,t_key,t_secret)
@@ -250,13 +243,6 @@ function oauth_sign_array2(argcp::Ptr{Cint},argvp::Ptr{Ptr{Ptr{Uint8}}},postargs
     end
     return bytestring(result)
 end
-
-#Deprecated
-#=
-function oauth_sign_array(argcp::Ptr{Cint},argvp::Ptr{Ptr{Ptr{Uint8}}},postargs::Ptr{Ptr{Uint8}},method::OAuthMethod,c_key::Ptr{Uint8},c_secret::Ptr{Uint8},t_key::Ptr{Uint8},t_secret::Ptr{Uint8})
-    ccall((:oauth_sign_array,liboauth),Ptr{Uint8},(Ptr{Cint},Ptr{Ptr{Ptr{Uint8}}},Ptr{Ptr{Uint8}},OAuthMethod,Ptr{Uint8},Ptr{Uint8},Ptr{Uint8},Ptr{Uint8}),argcp,argvp,postargs,method,c_key,c_secret,t_key,t_secret)
-end
-=#
 
 function oauth_body_hash_file(filename::Ptr{Uint8})
     result = ccall((:oauth_body_hash_file,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},),filename)
@@ -289,45 +275,5 @@ function oauth_sign_xmpp(xml::Ptr{Uint8},method::OAuthMethod,c_secret::Ptr{Uint8
     end
     return bytestring(result)
 end
-
-#Deprecated
-#=
-function oauth_http_get(u::Ptr{Uint8},q::Ptr{Uint8})
-    ccall((:oauth_http_get,liboauth),Ptr{Uint8},(Ptr{Uint8},Ptr{Uint8}),u,q)
-
-
-function oauth_http_get2(u::Ptr{Uint8},q::Ptr{Uint8},customheader::Ptr{Uint8})
-    ccall((:oauth_http_get2,liboauth),Ptr{Uint8},(Ptr{Uint8},Ptr{Uint8},Ptr{Uint8}),u,q,customheader)
-end
-
-function oauth_http_post(u::Ptr{Uint8},p::Ptr{Uint8})
-    ccall((:oauth_http_post,liboauth),Ptr{Uint8},(Ptr{Uint8},Ptr{Uint8}),u,p)
-end
-
-function oauth_http_post2(u::Ptr{Uint8},p::Ptr{Uint8},customheader::Ptr{Uint8})
-    ccall((:oauth_http_post2,liboauth),Ptr{Uint8},(Ptr{Uint8},Ptr{Uint8},Ptr{Uint8}),u,p,customheader)
-end
-
-function oauth_post_file(u::Ptr{Uint8},fn::Ptr{Uint8},len::Cint,customheader::Ptr{Uint8})
-    ccall((:oauth_post_file,liboauth),Ptr{Uint8},(Ptr{Uint8},Ptr{Uint8},Cint,Ptr{Uint8}),u,fn,len,customheader)
-end
-
-function oauth_post_data(u::Ptr{Uint8},data::Ptr{Uint8},len::Cint,customheader::Ptr{Uint8})
-    ccall((:oauth_post_data,liboauth),Ptr{Uint8},(Ptr{Uint8},Ptr{Uint8},Cint,Ptr{Uint8}),u,data,len,customheader)
-end
-
-
-function oauth_post_data_with_callback(u::Ptr{Uint8},data::Ptr{Uint8},len::Cint,customheader::Ptr{Uint8},callback::Ptr{Void},callback_data::Ptr{Void})
-    ccall((:oauth_post_data_with_callback,liboauth),Ptr{Uint8},(Ptr{Uint8},Ptr{Uint8},Cint,Ptr{Uint8},Ptr{Void},Ptr{Void}),u,data,len,customheader,callback,callback_data)
-end
-
-function oauth_send_data(u::Ptr{Uint8},data::Ptr{Uint8},len::Cint,customheader::Ptr{Uint8},httpMethod::Ptr{Uint8})
-    ccall((:oauth_send_data,liboauth),Ptr{Uint8},(Ptr{Uint8},Ptr{Uint8},Cint,Ptr{Uint8},Ptr{Uint8}),u,data,len,customheader,httpMethod)
-end
-
-function oauth_send_data_with_callback(u::Ptr{Uint8},data::Ptr{Uint8},len::Cint,customheader::Ptr{Uint8},callback::Ptr{Void},callback_data::Ptr{Void},httpMethod::Ptr{Uint8})
-    ccall((:oauth_send_data_with_callback,liboauth),Ptr{Uint8},(Ptr{Uint8},Ptr{Uint8},Cint,Ptr{Uint8},Ptr{Void},Ptr{Void},Ptr{Uint8}),u,data,len,customheader,callback,callback_data,httpMethod)
-end
-=#
 
 end # module
