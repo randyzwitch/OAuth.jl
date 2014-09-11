@@ -3,18 +3,6 @@
 
 module OAuth
 
-#These seem unnecessary
-#const LIBOAUTH_VERSION = "1.0.3"
-#const LIBOAUTH_VERSION_MAJOR = 1
-#const LIBOAUTH_VERSION_MINOR = 0
-#const LIBOAUTH_VERSION_MICRO = 3
-#const LIBOAUTH_CUR = 8
-#const LIBOAUTH_REV = 7
-#const LIBOAUTH_AGE = 8
-
-# Skipping MacroDefinition: OA_GCC_VERSION_AT_LEAST ( x , y ) ( __GNUC__ > x || __GNUC__ == x && __GNUC_MINOR__ >= y )
-# Skipping MacroDefinition: attribute_deprecated __attribute__ ( ( deprecated ) )
-
 ########################################################################################
 #
 #
@@ -27,7 +15,7 @@ export
 oauth_gen_nonce,
 oauth_sign_hmac_sha1,
 oauth_sign_hmac_sha1_raw,
-oauth_sign_plaintext #,
+oauth_sign_plaintext,
 #oauth_sign_rsa_sha1,
 #oauth_verify_rsa_sha1,
 #oauth_split_url_parameters,
@@ -47,19 +35,22 @@ oauth_sign_plaintext #,
 #oauth_body_hash_file,
 #oauth_body_hash_data,
 #oauth_body_hash_encode,
-#oauth_sign_xmpp
-#oauth_encode_base64
-#oauth_decode_base64
-#oauth_url_escape
-#oauth_url_unescape
+#oauth_sign_xmpp,
+#oauth_encode_base64,
+#oauth_decode_base64,
+oauth_url_escape
+#oauth_url_unescape,
 #oauth_catenc
 
+
+# What benefit does this provide, when OAuthMethod provided below?
 # begin enum ANONYMOUS_1
 typealias ANONYMOUS_1 Uint32
 const OA_HMAC = (uint32)(0)
 const OA_RSA = (uint32)(1)
 const OA_PLAINTEXT = (uint32)(2)
 # end enum ANONYMOUS_1
+
 
 # begin enum OAuthMethod
 typealias OAuthMethod Uint32
@@ -265,7 +256,8 @@ function oauth_sign_array2(argcp::Ptr{Cint},argvp::Ptr{Ptr{Ptr{Uint8}}},postargs
     return bytestring(result)
 end
 
-function oauth_body_hash_file(filename::Ptr{Uint8})
+#Modified Julia argument type
+function oauth_body_hash_file(filename::String)
     result = ccall((:oauth_body_hash_file,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},),filename)
     if result == C_NULL
         error("oauth_body_hash_file failed")
@@ -273,7 +265,8 @@ function oauth_body_hash_file(filename::Ptr{Uint8})
     return bytestring(result)
 end
 
-function oauth_body_hash_data(length::Cint,data::Ptr{Uint8})
+#Since first argument just length of string, should we move inside function? Modified Julia argument types
+function oauth_body_hash_data(length::Integer,data::String)
     result = ccall((:oauth_body_hash_data,LIBOAUTH),Ptr{Uint8},(Cint,Ptr{Uint8}),length,data)
     if result == C_NULL
         error("oauth_body_hash_data failed")
@@ -281,7 +274,8 @@ function oauth_body_hash_data(length::Cint,data::Ptr{Uint8})
     return bytestring(result)
 end
 
-function oauth_body_hash_encode(len::Cint,digest::Ptr{Cuchar})
+#Since first argument just length of string, should we move inside function? Modified len Julia argument type
+function oauth_body_hash_encode(len::Integer,digest::Ptr{Cuchar})
     result = ccall((:oauth_body_hash_encode,LIBOAUTH),Ptr{Uint8},(Cint,Ptr{Cuchar}),len,digest)
     if result == C_NULL
         error("oauth_body_hash_encode failed")
@@ -297,22 +291,36 @@ function oauth_sign_xmpp(xml::Ptr{Uint8},method::OAuthMethod,c_secret::Ptr{Uint8
     return bytestring(result)
 end
 
-function oauth_encode_base64()
-    error("Not yet implemented")
+#Since first argument just length of string, should we move inside function?
+function oauth_encode_base64(size::Integer,source::String)
+    #result = ccall((:oauth_sign_xmpp,LIBOAUTH),    )
+    if result == C_NULL
+        error("oauth_encode_base64 failed")
+    end
+    return bytestring(result)
 end
 
+#Does this make sense to include? When would we need to decode? Is this for if you are creating an API?
 function oauth_decode_base64()
     error("Not yet implemented")
 end
 
-function oauth_url_escape()
-    error("Not yet implemented")
+#Hope this is correct, test when on OSX machine
+function oauth_url_escape(url::String)
+    result = ccall((:oauth_url_escape,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},),url)
+    if result == C_NULL
+        error("oauth_url_escape failed")
+    end
+    return bytestring(result)
 end
 
+#Parse RFC3986 encoded 'string' back to unescaped version.
+#Not sure of value of this?
 function oauth_url_unescape()
     error("Not yet implemented")
 end
 
+#This 'url-escape strings and concatenate with '&' separator.' Could just use Julia for this?
 function oauth_catenc()
     error("Not yet implemented")
 end
