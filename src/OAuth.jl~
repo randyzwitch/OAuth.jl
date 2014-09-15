@@ -26,7 +26,8 @@ oauth_serialize_url_parameters,
 #oauth_cmpstringp,
 #oauth_param_exists,
 #oauth_add_param_to_array,
-oauth_time_independent_equals,
+#oauth_time_independent_equals_n,
+#oauth_time_independent_equals,
 #oauth_sign_url2,
 #oauth_sign_array2_process,
 #oauth_sign_array2,
@@ -219,16 +220,6 @@ function oauth_body_hash_file(filename::String)
     return bytestring(result)
 end
 
-#Is this necessary? Comparing two strings in constant time? Or is this if you're building an API? 
-#Docs say 'wrapper to oauth_time_independent_equals_n which calls strlen() for each argument', so we don't need both, right? (if any at all)
-function oauth_time_independent_equals(a::String,b::String)
-    result = ccall((:oauth_time_independent_equals,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Uint8}),a,b)
-    if result == C_NULL
-        error("oauth_time_independent_equals failed")
-    end
-    return bool(result)
-end
-
 ######Functions working above this line, tested and have tests written 
 
 
@@ -324,6 +315,25 @@ end
 #    end
 #    return bytestring(result)
 #end
+
+#Is this necessary? Comparing two strings in constant time? Or is this if you're building an API? 
+function oauth_time_independent_equals_n(a::Ptr{Uint8},b::Ptr{Uint8},len_a::Cint,len_b::Cint)
+    result = ccall((:oauth_time_independent_equals_n,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Uint8},Cint,Cint),a,b,len_a,len_b)
+    if result == C_NULL
+        error("oauth_time_independent_equals_n failed")
+    end
+    return bytestring(result)
+end
+
+#Is this necessary? Comparing two strings in constant time? Or is this if you're building an API? 
+#Docs say 'wrapper to oauth_time_independent_equals_n which calls strlen() for each argument', so we don't need both, right? (if any at all)
+function oauth_time_independent_equals(a::Ptr{Uint8},b::Ptr{Uint8})
+    result = ccall((:oauth_time_independent_equals,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Uint8}),a,b)
+    if result == C_NULL
+        error("oauth_time_independent_equals failed")
+    end
+    return bytestring(result)
+end
 
 #Pretty sure this is the MAIN function to make any API calls
 function oauth_sign_url2(url::Ptr{Uint8},postargs::Ptr{Ptr{Uint8}},method::OAuthMethod,http_method::Ptr{Uint8},c_key::Ptr{Uint8},c_secret::Ptr{Uint8},t_key::Ptr{Uint8},t_secret::Ptr{Uint8})

@@ -59,7 +59,7 @@ testkey = "kd94hf93k423kf44&pfkkdhi9sl3r4s00"
 @test oauth_body_hash_data("randy") == "oauth_body_hash=aFB6E2Zew6MXWcDTqUgEIhwKh9M="
 
 #Takes file, reads, returns oauth_body_hash string
-#@test oauth_body_hash_file(Pkg.dir("OAuth", "test", "randy.txt")) == "oauth_body_hash=9A1WNYRsC819CwKI768PbcMXwIg="
+#@test oauth_body_hash_file("/home/rzwitch/Desktop/randy.txt") == "oauth_body_hash=9A1WNYRsC819CwKI768PbcMXwIg="
 
 
 
