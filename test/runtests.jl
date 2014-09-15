@@ -39,3 +39,22 @@ testkey = "kd94hf93k423kf44&pfkkdhi9sl3r4s00"
 #oauth_url_unescape
 #Returns original string from encoded string
 @test oauth_url_unescape(oauth_url_escape("http://randyzwitch.com/")) == "http://randyzwitch.com/"
+
+#oauth_serialize_url_parameters
+#Takes array, returns string of &-separated parameters (skipping the first one)
+@test oauth_serialize_url_parameters(["Randy=Awesome", "Zwitch=Cool", "Julia=Fun"]) == "Zwitch=Cool&Julia=Fun"
+
+#oauth_serialize_url
+#Takes array, allows for starting somewhere other than entire array, returns string of &-separated parameters
+@test oauth_serialize_url(["Randy=Awesome", "Zwitch=Cool", "Julia=Fun"], 1) == "Zwitch=Cool&Julia=Fun"
+
+#Decodes base64 string, returning original string
+@test oauth_decode_base64(oauth_encode_base64("RandyZwitch")) == "RandyZwitch"
+
+#Takes array, returns string separated by value
+#last argument needs documentation (1, 2 or 4 acceptable values)
+@test oauth_serialize_url_sep(["randy=zwitch", "julia=language","clang=codegenerator"], "&", 0, 1) == "randy=zwitch&julia=language&clang=codegenerator"
+
+#Takes string, returns hashed body as url parameter
+@test oauth_body_hash_data("randy") == "oauth_body_hash=aFB6E2Zew6MXWcDTqUgEIhwKh9M="
+

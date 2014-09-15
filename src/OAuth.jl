@@ -20,9 +20,9 @@ oauth_sign_plaintext,
 #oauth_verify_rsa_sha1,
 #oauth_split_url_parameters,
 #oauth_split_post_parameters,
-#oauth_serialize_url,
-#oauth_serialize_url_sep,
-#oauth_serialize_url_parameters,
+oauth_serialize_url,
+oauth_serialize_url_sep,
+oauth_serialize_url_parameters,
 #oauth_cmpstringp,
 #oauth_param_exists,
 #oauth_add_param_to_array,
@@ -33,11 +33,11 @@ oauth_sign_plaintext,
 #oauth_sign_array2_process,
 #oauth_sign_array2,
 #oauth_body_hash_file,
-#oauth_body_hash_data,
+oauth_body_hash_data,
 #oauth_body_hash_encode,
 #oauth_sign_xmpp,
 oauth_encode_base64,
-#oauth_decode_base64,
+oauth_decode_base64,
 oauth_url_escape,
 oauth_url_unescape,
 #oauth_catenc
@@ -68,6 +68,8 @@ const LIBOAUTH = "/usr/local/lib/liboauth.dylib"
 #@windows?
 #@linux?
 #@unix?
+
+#TODO: errors kill kernel, so do proper error checking for each type of function
 
 ########################################################################################
 #
@@ -116,8 +118,8 @@ end
 
 #Returns base64 encoded string
 function oauth_encode_base64(source::String)
-    size = length(source)
-    result = ccall((:oauth_encode_base64,LIBOAUTH),Ptr{Uint8},(Cint,Ptr{Uint8}),size,source)
+    #size = length(source)
+    result = ccall((:oauth_encode_base64,LIBOAUTH),Ptr{Uint8},(Cint,Ptr{Uint8}),length(source),source)
     if result == C_NULL
         error("oauth_encode_base64 failed")
     end
@@ -142,30 +144,57 @@ function oauth_url_unescape(url::String)
     return bytestring(result)
 end
 
-#These two functions are the same, one is a shortcut to another
-#Requires an array ["randy=zwitch", "john=smith"], which is uncomfortable syntax vs. Julia Dict
-#Just re-write in pure Julia?
-
-#Modified for Integer type
 #This one skips the first parameter for some reason?
-#oauth_serialize_url_parameters(3, ["Randy=Awesome", "Apple=Fruit", "Pear=Fruit"]) returns "Apple=Fruit&Pear=Fruit"
-#function oauth_serialize_url_parameters(argc::Integer,argv::Ptr{Ptr{Uint8}})
-#    result = ccall((:oauth_serialize_url_parameters,LIBOAUTH),Ptr{Uint8},(Cint,Ptr{Ptr{Uint8}}),argc,argv)
-#    if result == C_NULL
-#        error("oauth_serialize_url_parameters")
-#    end
-#    return bytestring(result)
-#end
+#Feels like should also write a Dict method, which seems more natural to me
+function oauth_serialize_url_parameters(params::Array)
+    #argc = length(params)
+    result = ccall((:oauth_serialize_url_parameters,LIBOAUTH),Ptr{Uint8},(Cint,Ptr{Ptr{Uint8}}),length(params),params)
+    if result == C_NULL
+        error("oauth_serialize_url_parameters")
+    end
+    return bytestring(result)
+end
 
-#Modified first two types. Should argc be moved inside function, it is total number of elements in array?
-#oauth_serialize_url(2,0,["Randy=Awesome", "Zwitch=Cool"]) returns "Randy=Awesome&Zwitch=Cool"
-#function oauth_serialize_url(argc::Integer,start::Integer,argv::Ptr{Ptr{Uint8}})
-#    result = ccall((:oauth_serialize_url,LIBOAUTH),Ptr{Uint8},(Cint,Cint,Ptr{Ptr{Uint8}}),argc,start,argv)
-#    if result == C_NULL
-#        error("oauth_serialize_url failed")
-#    end
-#    return bytestring(result)
-#end
+#Feels like should also write a Dict method, which seems more natural to me
+function oauth_serialize_url(params::Array,start::Integer)
+    #argc = length(params)
+    result = ccall((:oauth_serialize_url,LIBOAUTH),Ptr{Uint8},(Cint,Cint,Ptr{Ptr{Uint8}}),length(params),start,params)
+    if result == C_NULL
+        error("oauth_serialize_url failed")
+    end
+    return bytestring(result)
+end
+
+#Decodes a base64 string
+function oauth_decode_base64(source::String)
+    dest = Array(Uint8)
+    result = ccall((:oauth_decode_base64,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Uint8}),dest,source)
+    if result == C_NULL
+        error("oauth_decode_base64 failed")
+    end
+    return bytestring(convert(Ptr{Uint8}, dest))
+end
+
+#Takes array, concatenates together based on sep
+#Filters array based on 
+#mod - bitwise modifiers: 1: skip all values that start with "oauth_" 2: skip all values that don't start with "oauth_" 4: double quotation marks are added around values (use with sep ", " for HTTP Authorization header).
+function oauth_serialize_url_sep(params::Array,sep::String,start::Integer, mod::Integer)
+    #argc = length(params)
+    result = ccall((:oauth_serialize_url_sep,LIBOAUTH),Ptr{Uint8},(Cint,Cint,Ptr{Ptr{Uint8}},Ptr{Uint8},Cint),length(params),start,params,sep,mod)
+    if result == C_NULL
+        error("oauth_serialize_url_sep failed")
+    end
+    return bytestring(result)
+end
+
+#Returns hashed body as url parameter
+function oauth_body_hash_data(data::String)
+    result = ccall((:oauth_body_hash_data,LIBOAUTH),Ptr{Uint8},(Cint,Ptr{Uint8}),length(data),data)
+    if result == C_NULL
+        error("oauth_body_hash_data failed")
+    end
+    return bytestring(result)
+end
 
 
 ######Functions working, tested and have tests written above this line
@@ -193,10 +222,6 @@ end
 
 #######Functions seem right above line, but can't validate because can't read in private key example
 
-
-
-
-
 #Only modified url type. 
 #How do you specific string array type in second argument, since second argument is output pointer?
 function oauth_split_url_parameters(url::String,argv::Ptr{Ptr{Ptr{Uint8}}})
@@ -212,15 +237,6 @@ function oauth_split_post_parameters(url::String,argv::Ptr{Ptr{Ptr{Uint8}}},useq
     result = ccall((:oauth_split_post_paramters,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Ptr{Ptr{Uint8}}},Int16),url,argv,usequeryescape)
     if result == C_NULL
         error("oauth_split_post_paramters failed")
-    end
-    return bytestring(result)
-end
-
-#Modified for Integer type
-function oauth_serialize_url_sep(argc::Integer,start::Integer,argv::Ptr{Ptr{Uint8}},sep::Ptr{Uint8},mod::Integer)
-    result = ccall((:oauth_serialize_url_sep,LIBOAUTH),Ptr{Uint8},(Cint,Cint,Ptr{Ptr{Uint8}},Ptr{Uint8},Cint),argc,start,argv,sep,mod)
-    if result == C_NULL
-        error("oauth_serialize_url_sep failed")
     end
     return bytestring(result)
 end
@@ -255,14 +271,14 @@ end
 #    return bytestring(result)
 #end
 
-#Is this necessary? We don't need to worry about freeing memory, right?
-#function oauth_free_array(argcp::Ptr{Cint},argvp::Ptr{Ptr{Ptr{Uint8}}})
-#    result = ccall((:oauth_free_array,LIBOAUTH),Void,(Ptr{Cint},Ptr{Ptr{Ptr{Uint8}}}),argcp,argvp)
-#    if result == C_NULL
-#        error("oauth_free_array failed")
-#    end
-#    return bytestring(result)
-#end
+
+function oauth_free_array(argcp::Ptr{Cint},argvp::Ptr{Ptr{Ptr{Uint8}}})
+    result = ccall((:oauth_free_array,LIBOAUTH),Void,(Ptr{Cint},Ptr{Ptr{Ptr{Uint8}}}),argcp,argvp)
+    if result == C_NULL
+        error("oauth_free_array failed")
+    end
+    return bytestring(result)
+end
 
 #Is this necessary? Comparing two strings in constant time? Or is this if you're building an API? 
 function oauth_time_independent_equals_n(a::Ptr{Uint8},b::Ptr{Uint8},len_a::Cint,len_b::Cint)
@@ -317,15 +333,6 @@ function oauth_body_hash_file(filename::String)
     return bytestring(result)
 end
 
-#Since first argument just length of string, should we move inside function? Modified Julia argument types
-function oauth_body_hash_data(length::Integer,data::String)
-    result = ccall((:oauth_body_hash_data,LIBOAUTH),Ptr{Uint8},(Cint,Ptr{Uint8}),length,data)
-    if result == C_NULL
-        error("oauth_body_hash_data failed")
-    end
-    return bytestring(result)
-end
-
 #Since first argument just length of string, should we move inside function? Modified len Julia argument type
 function oauth_body_hash_encode(len::Integer,digest::Ptr{Cuchar})
     result = ccall((:oauth_body_hash_encode,LIBOAUTH),Ptr{Uint8},(Cint,Ptr{Cuchar}),len,digest)
@@ -341,11 +348,6 @@ function oauth_sign_xmpp(xml::Ptr{Uint8},method::OAuthMethod,c_secret::Ptr{Uint8
         error("oauth_sign_xmpp failed")
     end
     return bytestring(result)
-end
-
-#Returns to a pointer specified in argument list, how do you 'return' that way?
-function oauth_decode_base64()
-    error("Not yet implemented")
 end
 
 #This 'url-escape strings and concatenate with '&' separator.' Could just use Julia for this?
