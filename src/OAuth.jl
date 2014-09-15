@@ -63,11 +63,32 @@ const OA_PLAINTEXT = (uint32)(2)
 
 #TODO: Make this generic for all operating systems
 #Do we need to use Homebrew or BinDeps to install liboauth for people or assume they installed themselves?
-const LIBOAUTH = "/usr/local/lib/liboauth.dylib"
+#const LIBOAUTH = "/usr/local/lib/liboauth.dylib"
 #@osx?
 #@windows?
 #@linux?
 #@unix?
+
+#Stolen from Jacob ODBC.jl
+let
+    global LIBOAUTH
+    succeeded = false
+    if !isdefined(:LIBOAUTH)
+        @linux_only   lib_choices = ["liboauth", "liboauth.so"]
+        @windows_only lib_choices = [""]
+        @osx_only     lib_choices = ["liboauth.dylib"]
+        local lib
+        for lib in lib_choices 
+            try
+                dlopen(lib)
+                succeeded = true
+                break
+            end
+        end
+        succeeded || error("liboauth library not found")
+        @eval const LIBOAUTH = $lib
+    end
+end
 
 #TODO: errors kill kernel, so do proper error checking for each type of function
 
