@@ -26,7 +26,7 @@ keylen = length(testkey)
 #Not sure what benefit of this function is, just returns key?
 testurl = "GET&http%3A%2F%2Fphotos.example.net%2Fphotos&file%3Dvacation.jpg%26oauth_consumer_key%3Ddpf43f3p2l4k3l03%26oauth_nonce%3Dkllo9940pd9333jh%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1191242096%26oauth_token%3Dnnch734d00sl2jdk%26oauth_version%3D1.0%26size%3Doriginal"
 testkey = "kd94hf93k423kf44&pfkkdhi9sl3r4s00"
-@test oauth_sign_plaintext(testurl, testkey) == testkey
+#@test oauth_sign_plaintext(testurl, testkey) == testkey
 
 #oauth_encode_base64
 #Returns base64 encoded
@@ -60,6 +60,5 @@ testkey = "kd94hf93k423kf44&pfkkdhi9sl3r4s00"
 
 #Takes file, reads, returns oauth_body_hash string
 #@test oauth_body_hash_file(Pkg.dir("OAuth", "test", "randy.txt")) == "oauth_body_hash=9A1WNYRsC819CwKI768PbcMXwIg="
-
 
 

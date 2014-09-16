@@ -6,7 +6,7 @@ module OAuth
 ########################################################################################
 #
 #
-#	Exports & Constants
+#   Exports & Constants
 #
 #
 ########################################################################################
@@ -39,6 +39,10 @@ oauth_decode_base64,
 oauth_url_escape,
 oauth_url_unescape,
 #oauth_catenc,
+OA_HMAC,
+OA_RSA,
+OA_PLAINTEXT,
+OAuthMethod, #Only exporting this during development
 LIBOAUTH #Only exporting this during development
 
 # What benefit does this provide, when OAuthMethod provided below?
@@ -89,7 +93,7 @@ end
 ########################################################################################
 #
 #
-#	Functions
+#   Functions
 #
 #
 ########################################################################################
@@ -301,7 +305,7 @@ function oauth_cmpstringp(p1::Ptr{Void},p2::Ptr{Void})
     if result == C_NULL
         error("oauth_cmpstringp failed")
     end
-    return bytestring(result)
+    return bool(result)
 end
 
 
@@ -351,15 +355,15 @@ function oauth_sign_array2(argcp::Ptr{Cint},argvp::Ptr{Ptr{Ptr{Uint8}}},postargs
 end
 
 #Since first argument just length of string, should we move inside function? Modified len Julia argument type
-function oauth_body_hash_encode(len::Integer,digest::Ptr{Cuchar})
-    result = ccall((:oauth_body_hash_encode,LIBOAUTH),Ptr{Uint8},(Cint,Ptr{Cuchar}),len,digest)
+function oauth_body_hash_encode(len::Integer,digest::String)
+    result = ccall((:oauth_body_hash_encode,LIBOAUTH),Ptr{Uint8},(Cint,Ptr{Uint8}),len,digest)
     if result == C_NULL
         error("oauth_body_hash_encode failed")
     end
     return bytestring(result)
 end
 
-function oauth_sign_xmpp(xml::Ptr{Uint8},method::OAuthMethod,c_secret::Ptr{Uint8},t_secret::Ptr{Uint8})
+function oauth_sign_xmpp(xml::String,method::OAuthMethod,c_secret::String,t_secret::String)
     result = ccall((:oauth_sign_xmpp,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},OAuthMethod,Ptr{Uint8},Ptr{Uint8}),xml,method,c_secret,t_secret)
     if result == C_NULL
         error("oauth_sign_xmpp failed")
