@@ -18,8 +18,8 @@ oauth_sign_hmac_sha1_raw,
 oauth_sign_plaintext,
 #oauth_sign_rsa_sha1,
 #oauth_verify_rsa_sha1,
-oauth_split_url_parameters,
-#oauth_split_post_parameters,
+oauth_split_url_parameters,#currently causes segfaults, even with memory free call
+oauth_split_post_parameters,#currently causes segfaults, even with memory free call
 oauth_serialize_url,
 oauth_serialize_url_sep,
 oauth_serialize_url_parameters,
@@ -44,15 +44,6 @@ OA_RSA,
 OA_PLAINTEXT,
 OAuthMethod, #Only exporting this during development
 LIBOAUTH #Only exporting this during development
-
-# What benefit does this provide, when OAuthMethod provided below?
-# begin enum ANONYMOUS_1
-#typealias ANONYMOUS_1 Uint32
-#const OA_HMAC = (uint32)(0)
-#const OA_RSA = (uint32)(1)
-#const OA_PLAINTEXT = (uint32)(2)
-# end enum ANONYMOUS_1
-
 
 # begin enum OAuthMethod
 typealias OAuthMethod Uint32
@@ -233,6 +224,48 @@ function oauth_time_independent_equals(a::String,b::String)
     return bool(result)
 end
 
+#Splits query string into components
+#Answer taken from https://groups.google.com/d/msg/julia-users/BvXn7784IGw/4wO4udHnwuAJ
+function oauth_split_url_parameters(url::String)
+    
+    a = Array(Ptr{Ptr{Uint8}},1)
+    result = ccall((:oauth_split_url_parameters,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Ptr{Ptr{Uint8}}}),convert(Ptr{Uint8},url),a)
+    if result == C_NULL
+        error("oauth_split_url_parameters failed")
+    end
+    formatted_result = []
+    for i in 1:result
+        aa = unsafe_load(a[1], i)
+        push!(formatted_result, bytestring(aa))
+    end
+
+    #Need to free memory here
+    #https://groups.google.com/d/msg/julia-users/BvXn7784IGw/c-zND8cukp8J
+    #Not sure this is actually freeing the memory
+    ccall((:oauth_free_array,LIBOAUTH), Void, (Ptr{Cint}, Ptr{Ptr{Ptr{Uint8}}}), [result], a)
+    return formatted_result
+end
+
+#Splits query string into components
+function oauth_split_post_parameters(url::String,usequeryescape::bool)
+    a = Array(Ptr{Ptr{Uint8}},1)   
+    result = ccall((:oauth_split_post_paramters,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Ptr{Ptr{Uint8}}},Int16),url,a,int(usequeryescape))
+    if result == C_NULL
+        error("oauth_split_post_paramters failed")
+    end
+    formatted_result = []
+    for i in 1:result
+        aa = unsafe_load(a[1], i)
+        push!(formatted_result, bytestring(aa))
+    end
+
+    #Need to free memory here
+    #https://groups.google.com/d/msg/julia-users/BvXn7784IGw/c-zND8cukp8J
+    #Not sure this is actually freeing the memory
+    ccall((:oauth_free_array,LIBOAUTH), Void, (Ptr{Cint}, Ptr{Ptr{Ptr{Uint8}}}), [result], a)
+    return formatted_result
+end
+
 ######Functions working above this line, tested and have tests written 
 
 
@@ -255,27 +288,9 @@ function oauth_verify_rsa_sha1(message::String,certificate::String,signature::St
     return result
 end
 
-#Splits query string into components
-#Answer taken from https://groups.google.com/d/msg/julia-users/BvXn7784IGw/4wO4udHnwuAJ
-#Causes core dump if run twice! oauth_free_array should be answer
-function oauth_split_url_parameters(url::String)
-    
-    a = Array(Ptr{Ptr{Uint8}},1)
-    result = ccall((:oauth_split_url_parameters,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Ptr{Ptr{Uint8}}}),convert(Ptr{Uint8},url),a)
-    if result == C_NULL
-        error("oauth_split_url_parameters failed")
-    end
-    formatted_result = {}
-    for i in 1:result
-        aa = unsafe_load(a[1], i)
-        push!(formatted_result, bytestring(aa))
-    end
-    #Need to free memory here?!
-    return formatted_result
-end
-
-#This 'url-escape strings and concatenate with '&' separator.' 
+#'url-escape strings and concatenate with '&' separator.' 
 #Works as-is with single argument; how to make variable args/array?
+#Or just re-write in Julia?
 function oauth_catenc(argv::String)
     result = ccall((:oauth_catenc,LIBOAUTH),Ptr{Uint8},(Ptr{Cint},Ptr{Uint8}),1, argv)
     if result == C_NULL
@@ -287,27 +302,21 @@ end
 #######Functions kinda work above line, but need some love to be truly "working"
 
 
+
+
+
+
 #######Up for grabs below here
 
-
-#Modified url and qesc types. How do you specific string array type in second argument?
-function oauth_split_post_parameters(url::String,argv::Ptr{Ptr{Ptr{Uint8}}},usequeryescape::Integer)
-    result = ccall((:oauth_split_post_paramters,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Ptr{Ptr{Uint8}}},Int16),url,argv,usequeryescape)
-    if result == C_NULL
-        error("oauth_split_post_paramters failed")
-    end
-    return bytestring(result)
-end
-
 #What is use case to compare two strings for OAuth? Is this if you're building an API?
-function oauth_cmpstringp(p1::Ptr{Void},p2::Ptr{Void})
-    result = ccall((:oauth_cmpstringp,LIBOAUTH),Cint,(Ptr{Void},Ptr{Void}),p1,p2)
-    if result == C_NULL
-        error("oauth_cmpstringp failed")
-    end
-    return bool(result)
-end
-
+#From documentation example, seems like only use is within C qsort, so this shouldn't be Julia function?
+#function oauth_cmpstringp(p1::Ptr{Void},p2::Ptr{Void})
+#    result = ccall((:oauth_cmpstringp,LIBOAUTH),Cint,(Ptr{Void},Ptr{Void}),p1,p2)
+#    if result == C_NULL
+#        error("oauth_cmpstringp failed")
+#    end
+#    return bool(result)
+#end
 
 #Unnecessary? Using C to check if a parameter exists in a Julia array seems overkill
 #Switched type to Integer and String. Like above, if argv just length of array, should we move inside function?
@@ -320,7 +329,6 @@ end
 #end
 
 #Unnecessary, same reason as above? Don't need liboauth to add things to Julia arrays
-#Like above, if argcp just length of array, should we move inside function?
 #function oauth_add_param_to_array(argcp::Ptr{Cint},argvp::Ptr{Ptr{Ptr{Uint8}}},addparam::Ptr{Uint8})
 #    result = ccall((:oauth_add_param_to_array,LIBOAUTH),Void,(Ptr{Cint},Ptr{Ptr{Ptr{Uint8}}},Ptr{Uint8}),argcp,argvp,addparam)
 #    if result == C_NULL

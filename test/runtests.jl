@@ -58,6 +58,15 @@ testkey = "kd94hf93k423kf44&pfkkdhi9sl3r4s00"
 #Takes string, returns hashed body as url parameter
 @test oauth_body_hash_data("randy") == "oauth_body_hash=aFB6E2Zew6MXWcDTqUgEIhwKh9M="
 
+#Takes url parameter string, returns array of values
+@test oauth_split_url_parameters("?julia=0.4&packages=400&speed=fantastic") == ["julia=0.4","packages=400","speed=fantastic"]
+
+#true treats '+' as null space
+@test oauth_split_post_parameters("?julia=0.4&packages=400&speed=fantastic", true) == ["julia=0.4","packages=400","speed=fantastic"]
+
+#false keeps '+' as an actual character
+@test oauth_split_post_parameters("?julia=0.4&packages=400&speed=fantastic", false) == ["julia=0.4","packages=400+","speed=fantastic"]
+
 #Takes file, reads, returns oauth_body_hash string
 #@test oauth_body_hash_file(Pkg.dir("OAuth", "test", "randy.txt")) == "oauth_body_hash=9A1WNYRsC819CwKI768PbcMXwIg="
 
