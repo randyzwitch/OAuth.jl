@@ -247,7 +247,7 @@ function oauth_split_url_parameters(url::String)
 end
 
 #Splits query string into components
-function oauth_split_post_parameters(url::String,usequeryescape::bool)
+function oauth_split_post_parameters(url::String,usequeryescape::Bool)
     a = Array(Ptr{Ptr{Uint8}},1)   
     result = ccall((:oauth_split_post_paramters,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Ptr{Ptr{Uint8}}},Int16),url,a,int(usequeryescape))
     if result == C_NULL
