@@ -2,6 +2,8 @@
 #http://liboauth.sourceforge.net/index.html
 
 module OAuth
+using Nettle, HttpCommon
+
 
 ########################################################################################
 #
@@ -14,12 +16,11 @@ module OAuth
 export 
 oauth_gen_nonce,
 oauth_sign_hmac_sha1,
-oauth_sign_hmac_sha1_raw,
-oauth_sign_plaintext,
+#oauth_sign_plaintext,
 #oauth_sign_rsa_sha1,
 #oauth_verify_rsa_sha1,
-oauth_split_url_parameters,#currently causes segfaults, even with memory free call
-oauth_split_post_parameters,#currently causes segfaults, even with memory free call
+#oauth_split_url_parameters,
+#oauth_split_post_parameters,
 oauth_serialize_url,
 oauth_serialize_url_sep,
 oauth_serialize_url_parameters,
@@ -89,70 +90,138 @@ end
 #
 ########################################################################################
 
-#Returns random string
+#Returns random string - Pure Julia
 function oauth_gen_nonce()
-    result = ccall((:oauth_gen_nonce,LIBOAUTH),Ptr{Uint8},())
-    if result == C_NULL
-        error("oauth_gen_nonce failed")
-    end
-    return bytestring(result)
+	
+	return randstring(32)
+
 end
 
-#Returns base64 string
-function oauth_sign_hmac_sha1(url::String,key::String)
-    result = ccall((:oauth_sign_hmac_sha1,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},Ptr{Uint8}),url,key)
-    if result == C_NULL
-        error("oauth_sign_hmac_sha1 failed")
-    end
-    return bytestring(result)
+#Returns base64 string - Julia, calls Nettle
+function oauth_sign_hmac_sha1(message::String,signingkey::String)
+
+	h = HMACState(SHA1, signingkey)
+	update!(h, message)
+	return base64(digest!(h))
+
 end
 
-#Same as oauth_sign_hmac_sha1, except you can specify string length
-#Returns base64 string
-function oauth_sign_hmac_sha1_raw(message::String,messagelength::Integer,key::String,keylength::Integer)
-    result = ccall((:oauth_sign_hmac_sha1_raw,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},Cint,Ptr{Uint8},Cint),message,messagelength,key,keylength)
-    if result == C_NULL
-        error("oauth_sign_hmac_sha1_raw failed")
-    end
-    return bytestring(result)
-end
-
-#Returns key in plaintext; unclear the value of this function
+#Unclear the value of this function - Pure Julia
 function oauth_sign_plaintext(message::String,key::String)
-    result = ccall((:oauth_sign_plaintext,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},Ptr{Uint8}),message,key)
-    if result == C_NULL
-        error("oauth_sign_plaintext failed")
-    end
-    return bytestring(result)
+
+	error("Not Currently Implemented")
+
 end
 
-#Returns base64 encoded string
+#Returns base64 encoded string - Pure Julia
 function oauth_encode_base64(source::String)
-    #size = length(source)
-    result = ccall((:oauth_encode_base64,LIBOAUTH),Ptr{Uint8},(Cint,Ptr{Uint8}),length(source),source)
-    if result == C_NULL
-        error("oauth_encode_base64 failed")
-    end
-    return bytestring(result)
+
+	return base64(source)
+
 end
 
-#Returns url escaped string
+#Fails test: "liboauth/OpenSSL: can not read private key"
+#function oauth_sign_rsa_sha1(message::String,key::String)
+#    result = ccall((:oauth_sign_rsa_sha1,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},Ptr{Uint8}),message,key)
+#    if result == C_NULL
+#        error("oauth_sign_rsa_sha1 failed")
+#    end
+#    return bytestring(result)
+#end
+
+#Only modified argument names & types
+#Cant read in private keys, so can't test
+#function oauth_verify_rsa_sha1(message::String,certificate::String,signature::String)
+#    result = ccall((:oauth_verify_rsa_sha1,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Uint8},Ptr{Uint8}),message,certificate,signature)
+#    if result == C_NULL
+#        error("oauth_verify_rsa_sha1 failed")
+#    end
+#    return result
+#end
+
+#Returns url escaped string - Julia, HttpCommon
 function oauth_url_escape(url::String)
-    result = ccall((:oauth_url_escape,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},),url)
-    if result == C_NULL
-        error("oauth_url_escape failed")
-    end
-    return bytestring(result)
+    
+    return encodeURI(url)
+
 end
 
-#Parse RFC3986 encoded 'string' back to unescaped version.
+#Parse encoded string back to unescaped version.
 function oauth_url_unescape(url::String)
-    result = ccall((:oauth_url_unescape,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},),url)
-    if result == C_NULL
-        error("oauth_url_unescape failed")
-    end
-    return bytestring(result)
+
+    return decodeURI(url)
+
 end
+
+#Splits query string into components
+#Answer taken from https://groups.google.com/d/msg/julia-users/BvXn7784IGw/4wO4udHnwuAJ
+#function oauth_split_url_parameters(url::String)
+#    
+#    a = Array(Ptr{Ptr{Uint8}},1)
+#    result = ccall((:oauth_split_url_parameters,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Ptr{Ptr{Uint8}}}),convert(Ptr{Uint8},url),a)
+#    if result == C_NULL
+#        error("oauth_split_url_parameters failed")
+#    end
+#    formatted_result = []
+#    for i in 1:result
+#        aa = unsafe_load(a[1], i)
+#        push!(formatted_result, bytestring(aa))
+#    end
+
+#   #Need to free memory here
+#    #https://groups.google.com/d/msg/julia-users/BvXn7784IGw/c-zND8cukp8J
+#    #Not sure this is actually freeing the memory
+#    ccall((:oauth_free_array,LIBOAUTH), Void, (Ptr{Cint}, Ptr{Ptr{Ptr{Uint8}}}), [result], a)
+#    return formatted_result
+#end
+
+#Splits query string into components
+#function oauth_split_post_parameters(url::String,usequeryescape::Bool)
+#    a = Array(Ptr{Ptr{Uint8}},1)   
+#    result = ccall((:oauth_split_post_paramters,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Ptr{Ptr{Uint8}}},Int16),url,a,int(usequeryescape))
+#    if result == C_NULL
+#        error("oauth_split_post_paramters failed")
+#    end
+#    formatted_result = []
+#    for i in 1:result
+#        aa = unsafe_load(a[1], i)
+#        push!(formatted_result, bytestring(aa))
+#    end
+#
+#    #Need to free memory here
+#    #https://groups.google.com/d/msg/julia-users/BvXn7784IGw/c-zND8cukp8J
+#    #Not sure this is actually freeing the memory
+#    ccall((:oauth_free_array,LIBOAUTH), Void, (Ptr{Cint}, Ptr{Ptr{Ptr{Uint8}}}), [result], a)
+#    return formatted_result
+#end
+
+#Feels like should also write a Dict method, which seems more natural to me - Pure Julia
+function oauth_serialize_url(params::Array; start=1)
+
+    serialized = ""
+    for element in params[start:end]
+        serialized *= "$(element)&"
+    end
+    return chop(serialized)
+    
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #This one skips the first parameter for some reason?
 #Feels like should also write a Dict method, which seems more natural to me
@@ -165,15 +234,6 @@ function oauth_serialize_url_parameters(params::Array)
     return bytestring(result)
 end
 
-#Feels like should also write a Dict method, which seems more natural to me
-function oauth_serialize_url(params::Array,start::Integer)
-    #argc = length(params)
-    result = ccall((:oauth_serialize_url,LIBOAUTH),Ptr{Uint8},(Cint,Cint,Ptr{Ptr{Uint8}}),length(params),start,params)
-    if result == C_NULL
-        error("oauth_serialize_url failed")
-    end
-    return bytestring(result)
-end
 
 #Decodes a base64 string
 function oauth_decode_base64(source::String)
@@ -224,69 +284,13 @@ function oauth_time_independent_equals(a::String,b::String)
     return bool(result)
 end
 
-#Splits query string into components
-#Answer taken from https://groups.google.com/d/msg/julia-users/BvXn7784IGw/4wO4udHnwuAJ
-function oauth_split_url_parameters(url::String)
-    
-    a = Array(Ptr{Ptr{Uint8}},1)
-    result = ccall((:oauth_split_url_parameters,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Ptr{Ptr{Uint8}}}),convert(Ptr{Uint8},url),a)
-    if result == C_NULL
-        error("oauth_split_url_parameters failed")
-    end
-    formatted_result = []
-    for i in 1:result
-        aa = unsafe_load(a[1], i)
-        push!(formatted_result, bytestring(aa))
-    end
 
-    #Need to free memory here
-    #https://groups.google.com/d/msg/julia-users/BvXn7784IGw/c-zND8cukp8J
-    #Not sure this is actually freeing the memory
-    ccall((:oauth_free_array,LIBOAUTH), Void, (Ptr{Cint}, Ptr{Ptr{Ptr{Uint8}}}), [result], a)
-    return formatted_result
-end
 
-#Splits query string into components
-function oauth_split_post_parameters(url::String,usequeryescape::Bool)
-    a = Array(Ptr{Ptr{Uint8}},1)   
-    result = ccall((:oauth_split_post_paramters,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Ptr{Ptr{Uint8}}},Int16),url,a,int(usequeryescape))
-    if result == C_NULL
-        error("oauth_split_post_paramters failed")
-    end
-    formatted_result = []
-    for i in 1:result
-        aa = unsafe_load(a[1], i)
-        push!(formatted_result, bytestring(aa))
-    end
-
-    #Need to free memory here
-    #https://groups.google.com/d/msg/julia-users/BvXn7784IGw/c-zND8cukp8J
-    #Not sure this is actually freeing the memory
-    ccall((:oauth_free_array,LIBOAUTH), Void, (Ptr{Cint}, Ptr{Ptr{Ptr{Uint8}}}), [result], a)
-    return formatted_result
-end
 
 ######Functions working above this line, tested and have tests written 
 
 
-#Fails test: "liboauth/OpenSSL: can not read private key"
-function oauth_sign_rsa_sha1(message::String,key::String)
-    result = ccall((:oauth_sign_rsa_sha1,LIBOAUTH),Ptr{Uint8},(Ptr{Uint8},Ptr{Uint8}),message,key)
-    if result == C_NULL
-        error("oauth_sign_rsa_sha1 failed")
-    end
-    return bytestring(result)
-end
 
-#Only modified argument names & types
-#Cant read in private keys, so can't test
-function oauth_verify_rsa_sha1(message::String,certificate::String,signature::String)
-    result = ccall((:oauth_verify_rsa_sha1,LIBOAUTH),Cint,(Ptr{Uint8},Ptr{Uint8},Ptr{Uint8}),message,certificate,signature)
-    if result == C_NULL
-        error("oauth_verify_rsa_sha1 failed")
-    end
-    return result
-end
 
 #'url-escape strings and concatenate with '&' separator.' 
 #Works as-is with single argument; how to make variable args/array?
