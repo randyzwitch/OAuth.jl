@@ -22,9 +22,13 @@ oauth_sign_hmac_sha1,
 #oauth_split_url_parameters,
 #oauth_split_post_parameters,
 oauth_serialize_url,
-oauth_serialize_url_sep,
-oauth_serialize_url_parameters,
+#oauth_serialize_url_sep, - delete
+#oauth_serialize_url_parameters, - delete, repetitive
 #oauth_cmpstringp,
+
+
+
+
 #oauth_param_exists,
 #oauth_add_param_to_array,
 oauth_time_independent_equals,
@@ -196,43 +200,81 @@ end
 #end
 
 #Feels like should also write a Dict method, which seems more natural to me - Pure Julia
-function oauth_serialize_url(params::Array; start=1)
+#Merges/replaces oauth_serialize_url_sep
+#Filters array based on 
+#mod - bitwise modifiers: 1: skip all values that start with "oauth_" 2: skip all values that don't start with "oauth_" 4: double quotation marks are added around values (use with sep ", " for HTTP Authorization header).
 
-    serialized = ""
-    for element in params[start:end]
-        serialized *= "$(element)&"
-    end
-    return chop(serialized)
+function oauth_serialize_url(params::Array; start=1, sep='&', mod=1)
+
+	if mod == 1
+	    serialized = ""
+	    for element in params[start:end]
+	        serialized *= "$(element)&"
+	    end
+	    return chop(serialized)
+	end
+	elseif mod == 2
+		error("Not implemented yet")
+	end
+	elseif mod == 4
+		error("Not implemented yet")
+	end
     
 end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#Takes array, concatenates together based on sep
+#Filters array based on 
+#mod - bitwise modifiers: 1: skip all values that start with "oauth_" 2: skip all values that don't start with "oauth_" 4: double quotation marks are added around values (use with sep ", " for HTTP Authorization header).
+#function oauth_serialize_url_sep(params::Array,sep::String,start::Integer, mod::Integer)
+#    #argc = length(params)
+#    result = ccall((:oauth_serialize_url_sep,LIBOAUTH),Ptr{Uint8},(Cint,Cint,Ptr{Ptr{Uint8}},Ptr{Uint8},Cint),length(params),start,params,sep,mod)
+#    if result == C_NULL
+#        error("oauth_serialize_url_sep failed")
+#    end
+#    return bytestring(result)
+#end
 
 #This one skips the first parameter for some reason?
 #Feels like should also write a Dict method, which seems more natural to me
-function oauth_serialize_url_parameters(params::Array)
-    #argc = length(params)
-    result = ccall((:oauth_serialize_url_parameters,LIBOAUTH),Ptr{Uint8},(Cint,Ptr{Ptr{Uint8}}),length(params),params)
-    if result == C_NULL
-        error("oauth_serialize_url_parameters")
-    end
-    return bytestring(result)
+#function oauth_serialize_url_parameters(params::Array)
+#    #argc = length(params)
+#    result = ccall((:oauth_serialize_url_parameters,LIBOAUTH),Ptr{Uint8},(Cint,Ptr{Ptr{Uint8}}),length(params),params)
+#    if result == C_NULL
+#        error("oauth_serialize_url_parameters")
+#    end
+#    return bytestring(result)
+#end
+
+#What is use case to compare two strings for OAuth? Is this if you're building an API?
+#From documentation example, seems like only use is within C qsort, so this shouldn't be Julia function? - Pure Julia
+function oauth_cmpstringp(string1::String, string2::String)
+    
+    return string1 == string2
+
 end
+
+#function oauth_param_exists(argv::Ptr{Ptr{Uint8}},argc::Integer,key::String)
+#    result = ccall((:oauth_param_exists,LIBOAUTH),Cint,(Ptr{Ptr{Uint8}},Cint,Ptr{Uint8}),argv,argc,key)
+#    if result == C_NULL
+#        error("oauth_param_exists failed")
+#    end
+#    return bytestring(result)
+#end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #Decodes a base64 string
@@ -245,17 +287,7 @@ function oauth_decode_base64(source::String)
     return bytestring(convert(Ptr{Uint8}, dest))
 end
 
-#Takes array, concatenates together based on sep
-#Filters array based on 
-#mod - bitwise modifiers: 1: skip all values that start with "oauth_" 2: skip all values that don't start with "oauth_" 4: double quotation marks are added around values (use with sep ", " for HTTP Authorization header).
-function oauth_serialize_url_sep(params::Array,sep::String,start::Integer, mod::Integer)
-    #argc = length(params)
-    result = ccall((:oauth_serialize_url_sep,LIBOAUTH),Ptr{Uint8},(Cint,Cint,Ptr{Ptr{Uint8}},Ptr{Uint8},Cint),length(params),start,params,sep,mod)
-    if result == C_NULL
-        error("oauth_serialize_url_sep failed")
-    end
-    return bytestring(result)
-end
+
 
 #Returns hashed body as url parameter
 function oauth_body_hash_data(data::String)
@@ -287,7 +319,7 @@ end
 
 
 
-######Functions working above this line, tested and have tests written 
+
 
 
 
@@ -303,24 +335,12 @@ function oauth_catenc(argv::String)
     return bytestring(result)
 end
 
-#######Functions kinda work above line, but need some love to be truly "working"
 
 
 
 
 
 
-#######Up for grabs below here
-
-#What is use case to compare two strings for OAuth? Is this if you're building an API?
-#From documentation example, seems like only use is within C qsort, so this shouldn't be Julia function?
-#function oauth_cmpstringp(p1::Ptr{Void},p2::Ptr{Void})
-#    result = ccall((:oauth_cmpstringp,LIBOAUTH),Cint,(Ptr{Void},Ptr{Void}),p1,p2)
-#    if result == C_NULL
-#        error("oauth_cmpstringp failed")
-#    end
-#    return bool(result)
-#end
 
 #Unnecessary? Using C to check if a parameter exists in a Julia array seems overkill
 #Switched type to Integer and String. Like above, if argv just length of array, should we move inside function?
