@@ -1,5 +1,6 @@
 module OAuth
 
+using Compat
 using HttpCommon, Requests, Nettle
 import HttpCommon: encodeURI
 
@@ -26,7 +27,7 @@ oauth_request_resource
 
 #Get current timestamp
 function oauth_timestamp()
-    "$(int(time()))"
+    "$(@compat round(Int, time()))"
 end
 
 #Generate random string
@@ -38,7 +39,7 @@ end
 function oauth_sign_hmac_sha1(message::String,signingkey::String)
     h = HMACState(SHA1, signingkey)
     update!(h, message)
-    base64(digest!(h))
+    base64encode(digest!(h))
 end
 
 #Create signing key
@@ -108,7 +109,7 @@ end
 function oauth_body_hash_encode(data::String)
         h = HashState(SHA1)
         update!(h, data)
-        base64(digest!(h))
+        base64encode(digest!(h))
 end
 
 #Use this function to build the header for every OAuth call
@@ -159,17 +160,17 @@ function oauth_request_resource(endpoint::String, httpmethod::String, options::D
     if uppercase(httpmethod) == "POST"
         return Requests.post(URI(endpoint), 
                         query_str; 
-                        headers =  
-                        {"Content-Type" => "application/x-www-form-urlencoded",
-                        "Authorization" => oauth_header_val,
-                        "Accept" => "*/*"})
+                        headers = @compat(Dict{String,String}(
+                            "Content-Type" => "application/x-www-form-urlencoded",
+                            "Authorization" => oauth_header_val,
+                            "Accept" => "*/*")))
 
     elseif uppercase(httpmethod) == "GET"
         return Requests.get(URI("$(endpoint)?$query_str"); 
-                        headers = 
-                        {"Content-Type" => "application/x-www-form-urlencoded",
-                        "Authorization" => oauth_header_val,
-                        "Accept" => "*/*"})
+                        headers = @compat(Dict{String,String}(
+                            "Content-Type" => "application/x-www-form-urlencoded",
+                            "Authorization" => oauth_header_val,
+                            "Accept" => "*/*")))
     end
     
 end
