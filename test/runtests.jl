@@ -1,4 +1,5 @@
 using OAuth
+using Compat
 using Base.Test
 
 
@@ -7,7 +8,7 @@ using Base.Test
 @test typeof(oauth_timestamp()) <: String
 
 #Test that timestamp is greater than integer representing approx. 2014-01-25 20:25:00
-@test int(oauth_timestamp()) > 1422235471
+@test @compat parse(Int, oauth_timestamp()) > 1422235471
 
 
 
