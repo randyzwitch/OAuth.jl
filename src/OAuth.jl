@@ -1,8 +1,7 @@
 module OAuth
 
 using Compat
-using HttpCommon, Requests, Nettle
-import HttpCommon: encodeURI
+using URIParser, Requests, Nettle
 
 export
 oauth_timestamp,
@@ -81,7 +80,9 @@ function oauth_serialize_url_parameters(options::Dict)
     chop(parameterstring)
 end
 
-#Extend encodeURI from HttpCommon to work on Dicts
+# See: https://github.com/randyzwitch/OAuth.jl/issues/3
+encodeURI(s) = URIParser.escape(s)
+
 function encodeURI(dict_of_parameters::Dict)
     for (k, v) in dict_of_parameters
         if typeof(v) <: String
