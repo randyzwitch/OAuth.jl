@@ -61,10 +61,13 @@ facts("oauth_percent_encode_keys!") do
     end
 end
 
-
-#TODO
-#oauth_serialize_url_parameters()
-
+facts("oauth_serialize_url_parameters") do
+    context("returns an & concatinated string of key=value") do
+        params = Dict("language" => "julia", "result" => "awesome")
+        expected = "language=julia&result=awesome"
+        @fact oauth_serialize_url_parameters(params) --> expected
+    end
+end
 
 
 #TODO

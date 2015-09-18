@@ -70,18 +70,10 @@ function oauth_percent_encode_keys!(options::Dict)
 end
 
 #Create query string from dictionary keys
-function oauth_serialize_url_parameters(options::Dict)
-    #Sort keys
-    keyssorted = sort!(collect(keys(options)))
-
-    #Build query string, remove trailing &
-    parameterstring = ""
-    for key in keyssorted
-        parameterstring *= "$key=$(options["$key"])&"
-    end
-
-    chop(parameterstring)
-end
+oauth_serialize_url_parameters(options::Dict) = join(
+    ["$key=$(options[key])" for key in sort!(collect(keys(options)))], 
+    "&"
+)
 
 # See: https://github.com/randyzwitch/OAuth.jl/issues/3
 encodeURI(s) = URIParser.escape(s)
