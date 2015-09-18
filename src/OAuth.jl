@@ -9,7 +9,7 @@ oauth_nonce,
 oauth_sign_hmac_sha1,
 oauth_signing_key,
 oauth_signature_base_string,
-oauth_percent_encode_keys,
+oauth_percent_encode_keys!,
 oauth_serialize_url_parameters,
 encodeURI,
 oauth_body_hash_file,
@@ -52,15 +52,18 @@ function oauth_signature_base_string(httpmethod::String, url::String, parameters
 end
 
 #URL-escape keys
-function oauth_percent_encode_keys(options::Dict)
+function oauth_percent_encode_keys!(options::Dict)
     #options encoded
     originalkeys = collect(keys(options))
 
     for key in originalkeys
-        options[encodeURI("$key")] = encodeURI(options["$key"])
-            if encodeURI("$key") != key
-                delete!(options, "$key")
-            end
+        key_str = string(key)
+        encoded_key = encodeURI(key_str)
+
+        options[encoded_key] = encodeURI(options[key_str])
+        if encodeURI(key_str) != key
+            delete!(options, key_str)
+        end
     end
 
     options
@@ -130,7 +133,7 @@ function oauth_header(httpmethod, baseurl, options, oauth_consumer_key, oauth_co
     options["oauth_version"] = oauth_version
     
     #options encoded
-    options = oauth_percent_encode_keys(options)
+    oauth_percent_encode_keys!(options)
 
     #Create ordered query string
     parameterstring = oauth_serialize_url_parameters(options)
