@@ -52,11 +52,14 @@ facts("oauth_signature_base_string") do
     end
 end
 
+facts("oauth_percent_encode_keys!") do 
+    context("replaces un-encoded keys with their encoded versions") do 
+        params   = Dict("badkey!"   => "value", "goodkey" => "value")
+        expected = Dict("badkey%21" => "value", "goodkey" => "value")
 
-
-#TODO
-#oauth_percent_encode_keys()
-
+        @fact oauth_percent_encode_keys!(params) --> expected
+    end
+end
 
 
 #TODO
