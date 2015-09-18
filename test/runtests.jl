@@ -69,9 +69,14 @@ facts("oauth_serialize_url_parameters") do
     end
 end
 
+facts("encodeURI!") do
+    context("escapes all values in the parameters that are strings") do
+        params   = Dict("iv" => 10, "s" => "value!")
+        expected = Dict("iv" => 10, "s" => "value%21")
 
-#TODO
-#encodeURI()
+        @fact encodeURI!(params) --> expected
+    end
+end
 
 
 

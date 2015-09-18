@@ -11,7 +11,7 @@ oauth_signing_key,
 oauth_signature_base_string,
 oauth_percent_encode_keys!,
 oauth_serialize_url_parameters,
-encodeURI,
+encodeURI!,
 oauth_body_hash_file,
 oauth_body_hash_data,
 oauth_body_hash_encode,
@@ -78,12 +78,10 @@ oauth_serialize_url_parameters(options::Dict) = join(
 # See: https://github.com/randyzwitch/OAuth.jl/issues/3
 encodeURI(s) = URIParser.escape(s)
 
-function encodeURI(dict_of_parameters::Dict)
+function encodeURI!(dict_of_parameters::Dict)
     for (k, v) in dict_of_parameters
         if typeof(v) <: String
-            dict_of_parameters["$k"] = encodeURI(v)
-        else
-            dict_of_parameters["$k"] = v
+            dict_of_parameters[k] = encodeURI(v)
         end
     end
     return dict_of_parameters
@@ -109,7 +107,7 @@ function oauth_body_hash_encode(data::String)
 end
 
 #Use this function to build the header for every OAuth call
-#This function assumes that options Dict has already been run through encodeURI
+#This function assumes that options Dict has already been run through encodeURI!
 #Use this function to build the header for every OAuth call
 #This function assumes that options Dict has already been run through encodeURI
 function oauth_header(httpmethod, baseurl, options, oauth_consumer_key, oauth_consumer_secret, oauth_token, oauth_token_secret;
