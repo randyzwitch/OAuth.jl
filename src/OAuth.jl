@@ -102,9 +102,7 @@ function oauth_body_hash_encode(data::String)
 end
 
 #Use this function to build the header for every OAuth call
-#This function assumes that options Dict has already been run through encodeURI!
-#Use this function to build the header for every OAuth call
-#This function assumes that options Dict has already been run through encodeURI
+# This function assumes that options Dict has already been run through encodeURI!
 function oauth_header(httpmethod, baseurl, options, oauth_consumer_key, oauth_consumer_secret, oauth_token, oauth_token_secret;
                      oauth_signature_method = "HMAC-SHA1",
                      oauth_version = "1.0")
@@ -137,31 +135,26 @@ function oauth_header(httpmethod, baseurl, options, oauth_consumer_key, oauth_co
 end
 
 function oauth_request_resource(endpoint::String, httpmethod::String, options::Dict, oauth_consumer_key::String, oauth_consumer_secret::String, oauth_token::String, oauth_token_secret::String)
-
     #Build query string
     query_str = Requests.format_query_str(options)
     
     #Build oauth_header
-    #oauth_header_val = oauth_header(httpmethod, endpoint, options)
     oauth_header_val = oauth_header(httpmethod, endpoint, options, oauth_consumer_key, oauth_consumer_secret, oauth_token, oauth_token_secret)
     
     #Make request
-    if uppercase(httpmethod) == "POST"
-        return Requests.post(URI(endpoint), 
-                        query_str; 
-                        headers = @compat(Dict{String,String}(
-                            "Content-Type" => "application/x-www-form-urlencoded",
-                            "Authorization" => oauth_header_val,
-                            "Accept" => "*/*")))
-
-    elseif uppercase(httpmethod) == "GET"
-        return Requests.get(URI("$(endpoint)?$query_str"); 
-                        headers = @compat(Dict{String,String}(
-                            "Content-Type" => "application/x-www-form-urlencoded",
-                            "Authorization" => oauth_header_val,
-                            "Accept" => "*/*")))
-    end
+    headers = @compat(
+        Dict{String,String}(
+            "Content-Type" => "application/x-www-form-urlencoded",
+            "Authorization" => oauth_header_val,
+            "Accept" => "*/*"
+        )
+    )
     
+    if uppercase(httpmethod) == "POST"
+        return Requests.post(URI(endpoint), query_str; headers = headers)
+    elseif uppercase(httpmethod) == "GET"
+        return Requests.get(URI("$(endpoint)?$query_str"); headers = headers)
+    end
 end
 
-end # module
+end
