@@ -18,6 +18,7 @@ oauth_body_hash_encode,
 oauth_header,
 oauth_request_resource
 
+
 #############################################################
 #
 # OAuth Client Functions
@@ -69,6 +70,11 @@ function oauth_percent_encode_keys!(options::Dict)
     options
 end
 
+@deprecate(
+    oauth_percent_encode_keys(options::Dict),
+    oauth_percent_encode_keys!(options::Dict)
+)
+
 #Create query string from dictionary keys
 oauth_serialize_url_parameters(options::Dict) = join(
     ["$key=$(options[key])" for key in sort!(collect(keys(options)))], 
@@ -86,6 +92,11 @@ function encodeURI!(dict_of_parameters::Dict)
     end
     return dict_of_parameters
 end
+
+@deprecate(
+    encodeURI(dict_of_parameters::Dict),
+    encodeURI!(dict_of_parameters::Dict)
+)
 
 function oauth_body_hash_file(filename::String)
     oauth_body_hash_data(readall(open(filename)))
@@ -149,7 +160,7 @@ function oauth_request_resource(endpoint::String, httpmethod::String, options::D
             "Accept" => "*/*"
         )
     )
-    
+
     if uppercase(httpmethod) == "POST"
         return Requests.post(URI(endpoint), query_str; headers = headers)
     elseif uppercase(httpmethod) == "GET"
