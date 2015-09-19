@@ -9,14 +9,15 @@ oauth_nonce,
 oauth_sign_hmac_sha1,
 oauth_signing_key,
 oauth_signature_base_string,
-oauth_percent_encode_keys,
+oauth_percent_encode_keys!,
 oauth_serialize_url_parameters,
-encodeURI,
+encodeURI!,
 oauth_body_hash_file,
 oauth_body_hash_data,
 oauth_body_hash_encode,
 oauth_header,
 oauth_request_resource
+
 
 #############################################################
 #
@@ -52,61 +53,59 @@ function oauth_signature_base_string(httpmethod::String, url::String, parameters
 end
 
 #URL-escape keys
-function oauth_percent_encode_keys(options::Dict)
+function oauth_percent_encode_keys!(options::Dict)
     #options encoded
     originalkeys = collect(keys(options))
 
     for key in originalkeys
-        options[encodeURI("$key")] = encodeURI(options["$key"])
-            if encodeURI("$key") != key
-                delete!(options, "$key")
-            end
+        key_str = string(key)
+        encoded_key = encodeURI(key_str)
+
+        options[encoded_key] = encodeURI(options[key_str])
+        if encodeURI(key_str) != key
+            delete!(options, key_str)
+        end
     end
 
     options
 end
 
+@deprecate(
+    oauth_percent_encode_keys(options::Dict),
+    oauth_percent_encode_keys!(options::Dict)
+)
+
 #Create query string from dictionary keys
-function oauth_serialize_url_parameters(options::Dict)
-    #Sort keys
-    keyssorted = sort!(collect(keys(options)))
-
-    #Build query string, remove trailing &
-    parameterstring = ""
-    for key in keyssorted
-        parameterstring *= "$key=$(options["$key"])&"
-    end
-
-    chop(parameterstring)
-end
+oauth_serialize_url_parameters(options::Dict) = join(
+    ["$key=$(options[key])" for key in sort!(collect(keys(options)))], 
+    "&"
+)
 
 # See: https://github.com/randyzwitch/OAuth.jl/issues/3
 encodeURI(s) = URIParser.escape(s)
 
-function encodeURI(dict_of_parameters::Dict)
+function encodeURI!(dict_of_parameters::Dict)
     for (k, v) in dict_of_parameters
         if typeof(v) <: String
-            dict_of_parameters["$k"] = encodeURI(v)
-        else
-            dict_of_parameters["$k"] = v
+            dict_of_parameters[k] = encodeURI(v)
         end
     end
     return dict_of_parameters
 end
 
-#Combine with oauth_body_hash_file as one function with two methods?
+@deprecate(
+    encodeURI(dict_of_parameters::Dict),
+    encodeURI!(dict_of_parameters::Dict)
+)
+
 function oauth_body_hash_file(filename::String)
-    filecontents =  readall(open(filename))
-    oauth_body_hash_data(filecontents)
+    oauth_body_hash_data(readall(open(filename)))
 end
 
-#Combine with oauth_body_hash_file as one function with two methods?
 function oauth_body_hash_data(data::String)
-    bodyhash = oauth_body_hash_encode(data)
-    "oauth_body_hash=$(bodyhash)"
+    "oauth_body_hash=$(oauth_body_hash_encode(data))"
 end
 
-#Use functions from Nettle
 function oauth_body_hash_encode(data::String)
         h = HashState(SHA1)
         update!(h, data)
@@ -114,9 +113,7 @@ function oauth_body_hash_encode(data::String)
 end
 
 #Use this function to build the header for every OAuth call
-#This function assumes that options Dict has already been run through encodeURI
-#Use this function to build the header for every OAuth call
-#This function assumes that options Dict has already been run through encodeURI
+# This function assumes that options Dict has already been run through encodeURI!
 function oauth_header(httpmethod, baseurl, options, oauth_consumer_key, oauth_consumer_secret, oauth_token, oauth_token_secret;
                      oauth_signature_method = "HMAC-SHA1",
                      oauth_version = "1.0")
@@ -130,7 +127,7 @@ function oauth_header(httpmethod, baseurl, options, oauth_consumer_key, oauth_co
     options["oauth_version"] = oauth_version
     
     #options encoded
-    options = oauth_percent_encode_keys(options)
+    oauth_percent_encode_keys!(options)
 
     #Create ordered query string
     parameterstring = oauth_serialize_url_parameters(options)
@@ -149,31 +146,26 @@ function oauth_header(httpmethod, baseurl, options, oauth_consumer_key, oauth_co
 end
 
 function oauth_request_resource(endpoint::String, httpmethod::String, options::Dict, oauth_consumer_key::String, oauth_consumer_secret::String, oauth_token::String, oauth_token_secret::String)
-
     #Build query string
     query_str = Requests.format_query_str(options)
     
     #Build oauth_header
-    #oauth_header_val = oauth_header(httpmethod, endpoint, options)
     oauth_header_val = oauth_header(httpmethod, endpoint, options, oauth_consumer_key, oauth_consumer_secret, oauth_token, oauth_token_secret)
     
     #Make request
-    if uppercase(httpmethod) == "POST"
-        return Requests.post(URI(endpoint), 
-                        query_str; 
-                        headers = @compat(Dict{String,String}(
-                            "Content-Type" => "application/x-www-form-urlencoded",
-                            "Authorization" => oauth_header_val,
-                            "Accept" => "*/*")))
+    headers = @compat(
+        Dict{String,String}(
+            "Content-Type" => "application/x-www-form-urlencoded",
+            "Authorization" => oauth_header_val,
+            "Accept" => "*/*"
+        )
+    )
 
+    if uppercase(httpmethod) == "POST"
+        return Requests.post(URI(endpoint), query_str; headers = headers)
     elseif uppercase(httpmethod) == "GET"
-        return Requests.get(URI("$(endpoint)?$query_str"); 
-                        headers = @compat(Dict{String,String}(
-                            "Content-Type" => "application/x-www-form-urlencoded",
-                            "Authorization" => oauth_header_val,
-                            "Accept" => "*/*")))
+        return Requests.get(URI("$(endpoint)?$query_str"); headers = headers)
     end
-    
 end
 
-end # module
+end
