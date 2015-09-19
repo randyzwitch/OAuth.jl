@@ -87,19 +87,14 @@ function encodeURI!(dict_of_parameters::Dict)
     return dict_of_parameters
 end
 
-#Combine with oauth_body_hash_file as one function with two methods?
 function oauth_body_hash_file(filename::String)
-    filecontents =  readall(open(filename))
-    oauth_body_hash_data(filecontents)
+    oauth_body_hash_data(readall(open(filename)))
 end
 
-#Combine with oauth_body_hash_file as one function with two methods?
 function oauth_body_hash_data(data::String)
-    bodyhash = oauth_body_hash_encode(data)
-    "oauth_body_hash=$(bodyhash)"
+    "oauth_body_hash=$(oauth_body_hash_encode(data))"
 end
 
-#Use functions from Nettle
 function oauth_body_hash_encode(data::String)
         h = HashState(SHA1)
         update!(h, data)

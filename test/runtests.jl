@@ -78,21 +78,23 @@ facts("encodeURI!") do
     end
 end
 
+facts("oauth_body_hash_encode") do
+    context("returns the base64 encoded SHA1 digest of the data") do
+        result = oauth_body_hash_encode("Hello, World!")
+        expected = "CgqfKmdylCVXq1NV12r0Qvj2XgE="
+        @fact result --> expected
+    end
+end
 
+facts("oauth_body_hash_data") do
+    context("returns a string of the oauth_body_hash key-value pair ") do
+        result = oauth_body_hash_data("Hello, World!")
+        encoded_hash = "CgqfKmdylCVXq1NV12r0Qvj2XgE="
+        expected = "oauth_body_hash=$encoded_hash"
 
-#TODO
-#oauth_body_hash_file(filename::String)
-
-
-
-#TODO
-#oauth_body_hash_data(data::String)
-
-
-
-#TODO
-#oauth_body_hash_encode(data::String)
-
+        @fact result --> expected
+    end
+end
 
 
 #TODO
