@@ -96,6 +96,17 @@ facts("oauth_body_hash_data") do
     end
 end
 
+facts("oauth_body_hash_file") do
+    context("returns a string of the oauth_body_hash key-value pair ") do
+        test_file = joinpath(dirname(@__FILE__), "auth_body_hash_file.txt")
+        result = oauth_body_hash_file(test_file)
+        encoded_hash = "CgqfKmdylCVXq1NV12r0Qvj2XgE="
+        expected = "oauth_body_hash=$encoded_hash"
+
+        @fact result --> expected
+    end
+end
+
 
 #TODO
 #oauth_header()
