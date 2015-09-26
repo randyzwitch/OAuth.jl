@@ -37,9 +37,7 @@ end
 
 #HMAC-SHA1 sign message
 function oauth_sign_hmac_sha1(message::String,signingkey::String)
-    h = HMACState(SHA1, signingkey)
-    update!(h, message)
-    base64encode(digest!(h))
+    base64encode(digest("sha1", signingkey, message))
 end
 
 #Create signing key
@@ -77,7 +75,7 @@ end
 
 #Create query string from dictionary keys
 oauth_serialize_url_parameters(options::Dict) = join(
-    ["$key=$(options[key])" for key in sort!(collect(keys(options)))], 
+    ["$key=$(options[key])" for key in sort!(collect(keys(options)))],
     "&"
 )
 
@@ -107,9 +105,7 @@ function oauth_body_hash_data(data::String)
 end
 
 function oauth_body_hash_encode(data::String)
-        h = HashState(SHA1)
-        update!(h, data)
-        base64encode(digest!(h))
+        base64encode(digest("SHA1", data))
 end
 
 #Use this function to build the header for every OAuth call
@@ -117,7 +113,7 @@ end
 function oauth_header(httpmethod, baseurl, options, oauth_consumer_key, oauth_consumer_secret, oauth_token, oauth_token_secret;
                      oauth_signature_method = "HMAC-SHA1",
                      oauth_version = "1.0")
-    
+
     #keys for parameter string
     options["oauth_consumer_key"] = oauth_consumer_key
     options["oauth_nonce"] = oauth_nonce(32)
@@ -125,33 +121,33 @@ function oauth_header(httpmethod, baseurl, options, oauth_consumer_key, oauth_co
     options["oauth_timestamp"] = oauth_timestamp()
     options["oauth_token"] = oauth_token
     options["oauth_version"] = oauth_version
-    
+
     #options encoded
     oauth_percent_encode_keys!(options)
 
     #Create ordered query string
     parameterstring = oauth_serialize_url_parameters(options)
-    
+
     #Calculate signature_base_string
     signature_base_string = oauth_signature_base_string(uppercase(httpmethod), baseurl, parameterstring)
-    
+
     #Calculate signing_key
     signing_key = oauth_signing_key(oauth_consumer_secret, oauth_token_secret)
-    
+
     #Calculate oauth_signature
     oauth_sig = encodeURI(oauth_sign_hmac_sha1(signature_base_string, signing_key))
-    
+
     return "OAuth oauth_consumer_key=\"$(options["oauth_consumer_key"])\", oauth_nonce=\"$(options["oauth_nonce"])\", oauth_signature=\"$(oauth_sig)\", oauth_signature_method=\"$(options["oauth_signature_method"])\", oauth_timestamp=\"$(options["oauth_timestamp"])\", oauth_token=\"$(options["oauth_token"])\", oauth_version=\"$(options["oauth_version"])\""
-    
+
 end
 
 function oauth_request_resource(endpoint::String, httpmethod::String, options::Dict, oauth_consumer_key::String, oauth_consumer_secret::String, oauth_token::String, oauth_token_secret::String)
     #Build query string
     query_str = Requests.format_query_str(options)
-    
+
     #Build oauth_header
     oauth_header_val = oauth_header(httpmethod, endpoint, options, oauth_consumer_key, oauth_consumer_secret, oauth_token, oauth_token_secret)
-    
+
     #Make request
     headers = @compat(
         Dict{String,String}(
