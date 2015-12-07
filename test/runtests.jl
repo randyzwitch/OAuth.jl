@@ -5,7 +5,7 @@ using FactCheck
 
 facts("oauth_timestamp") do
     context("returns a string") do
-        @fact typeof(oauth_timestamp()) <: String --> true
+        @fact typeof(oauth_timestamp()) <: AbstractString --> true
     end
 
     context("returns a value representing a time after 2014-01-25 20:25:00") do
@@ -14,11 +14,11 @@ facts("oauth_timestamp") do
 end
 
 facts("ouath_nonce") do
-    context("returns a string") do 
-        @fact typeof(oauth_nonce(15)) <: String --> true
+    context("returns a string") do
+        @fact typeof(oauth_nonce(15)) <: AbstractString --> true
     end
 
-    context("with a length equal to the parameter length") do 
+    context("with a length equal to the parameter length") do
         @fact length(oauth_nonce(15)) --> 15
         @fact length(oauth_nonce(20)) --> 20
         @fact length(oauth_nonce(25)) --> 25
@@ -28,13 +28,13 @@ facts("ouath_nonce") do
 end
 
 facts("oauth_sign_hmac_sha1") do
-    context("provides a consistent string") do 
+    context("provides a consistent string") do
         expected = "WqKCG5iyhFiES3fWYVdWJWwinaY="
         @fact oauth_sign_hmac_sha1("randy", "zwitch") --> expected
     end
 end
 
-facts("oauth_signing_key") do 
+facts("oauth_signing_key") do
     context("returns a concatenation of values, seperated by &") do
         result = oauth_signing_key("9djdj82h48djs9d2", "kkk9d7dh3k39sjv7")
         expected = "9djdj82h48djs9d2&kkk9d7dh3k39sjv7"
@@ -42,8 +42,8 @@ facts("oauth_signing_key") do
     end
 end
 
-facts("oauth_signature_base_string") do 
-    context("returns a concatinated and percent-encoded string") do 
+facts("oauth_signature_base_string") do
+    context("returns a concatinated and percent-encoded string") do
         result = oauth_signature_base_string(
             "POST", "http://example.com", "?julia=fast&lang=elegant"
         )
@@ -52,8 +52,8 @@ facts("oauth_signature_base_string") do
     end
 end
 
-facts("oauth_percent_encode_keys!") do 
-    context("replaces un-encoded keys with their encoded versions") do 
+facts("oauth_percent_encode_keys!") do
+    context("replaces un-encoded keys with their encoded versions") do
         params   = @compat Dict("badkey!"   => "value", "goodkey" => "value")
         expected = @compat Dict("badkey%21" => "value", "goodkey" => "value")
 
@@ -115,3 +115,6 @@ end
 
 #TODO
 #oauth_request_resource()
+
+
+FactCheck.exitstatus()
