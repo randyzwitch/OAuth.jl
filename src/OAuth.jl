@@ -36,17 +36,17 @@ function oauth_nonce(length::Int64)
 end
 
 #HMAC-SHA1 sign message
-function oauth_sign_hmac_sha1(message::String,signingkey::String)
+function oauth_sign_hmac_sha1(message::AbstractString,signingkey::AbstractString)
     base64encode(digest("sha1", signingkey, message))
 end
 
 #Create signing key
-function oauth_signing_key(oauth_consumer_secret::String, oauth_token_secret::String)
+function oauth_signing_key(oauth_consumer_secret::AbstractString, oauth_token_secret::AbstractString)
     "$(oauth_consumer_secret)&$(oauth_token_secret)"
 end
 
 #Create signature_base_string
-function oauth_signature_base_string(httpmethod::String, url::String, parameterstring::String)
+function oauth_signature_base_string(httpmethod::AbstractString, url::AbstractString, parameterstring::AbstractString)
     "$(httpmethod)&$(encodeURI(url))&$(encodeURI(parameterstring))"
 end
 
@@ -84,7 +84,7 @@ encodeURI(s) = URIParser.escape(s)
 
 function encodeURI!(dict_of_parameters::Dict)
     for (k, v) in dict_of_parameters
-        if typeof(v) <: String
+        if typeof(v) <: AbstractString
             dict_of_parameters[k] = encodeURI(v)
         end
     end
@@ -96,15 +96,15 @@ end
     encodeURI!(dict_of_parameters::Dict)
 )
 
-function oauth_body_hash_file(filename::String)
+function oauth_body_hash_file(filename::AbstractString)
     oauth_body_hash_data(readall(open(filename)))
 end
 
-function oauth_body_hash_data(data::String)
+function oauth_body_hash_data(data::AbstractString)
     "oauth_body_hash=$(oauth_body_hash_encode(data))"
 end
 
-function oauth_body_hash_encode(data::String)
+function oauth_body_hash_encode(data::AbstractString)
         base64encode(digest("SHA1", data))
 end
 
@@ -141,7 +141,7 @@ function oauth_header(httpmethod, baseurl, options, oauth_consumer_key, oauth_co
 
 end
 
-function oauth_request_resource(endpoint::String, httpmethod::String, options::Dict, oauth_consumer_key::String, oauth_consumer_secret::String, oauth_token::String, oauth_token_secret::String)
+function oauth_request_resource(endpoint::AbstractString, httpmethod::AbstractString, options::Dict, oauth_consumer_key::AbstractString, oauth_consumer_secret::AbstractString, oauth_token::AbstractString, oauth_token_secret::AbstractString)
     #Build query string
     query_str = Requests.format_query_str(options)
 
@@ -150,7 +150,7 @@ function oauth_request_resource(endpoint::String, httpmethod::String, options::D
 
     #Make request
     headers = @compat(
-        Dict{String,String}(
+        Dict{AbstractString,AbstractString}(
             "Content-Type" => "application/x-www-form-urlencoded",
             "Authorization" => oauth_header_val,
             "Accept" => "*/*"
