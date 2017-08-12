@@ -29,7 +29,7 @@ oauth_request_resource
 
 #Get current timestamp
 function oauth_timestamp()
-    "$(@compat round(Int, time()))"
+    "$(round(Int, time()))"
 end
 
 #Generate random string
@@ -151,13 +151,11 @@ function oauth_request_resource(endpoint::AbstractString, httpmethod::AbstractSt
     oauth_header_val = oauth_header(httpmethod, endpoint, options, oauth_consumer_key, oauth_consumer_secret, oauth_token, oauth_token_secret)
 
     #Make request
-    headers = @compat(
-        Dict{AbstractString,AbstractString}(
+    headers = Dict{AbstractString,AbstractString}(
             "Content-Type" => "application/x-www-form-urlencoded",
             "Authorization" => oauth_header_val,
             "Accept" => "*/*"
         )
-    )
 
     if uppercase(httpmethod) == "POST"
         return Requests.post(URI(endpoint), query_str; headers = headers)
