@@ -9,7 +9,7 @@ facts("oauth_timestamp") do
     end
 
     context("returns a value representing a time after 2014-01-25 20:25:00") do
-        @compat @fact parse(Int, oauth_timestamp()) > 1422235471 --> true
+        @fact parse(Int, oauth_timestamp()) > 1422235471 --> true
     end
 end
 
@@ -54,8 +54,8 @@ end
 
 facts("oauth_percent_encode_keys!") do
     context("replaces un-encoded keys with their encoded versions") do
-        params   = @compat Dict("badkey!"   => "value", "goodkey" => "value")
-        expected = @compat Dict("badkey%21" => "value", "goodkey" => "value")
+        params   = Dict("badkey!"   => "value", "goodkey" => "value")
+        expected = Dict("badkey%21" => "value", "goodkey" => "value")
 
         @fact oauth_percent_encode_keys!(params) --> expected
     end
@@ -63,7 +63,7 @@ end
 
 facts("oauth_serialize_url_parameters") do
     context("returns an & concatinated string of key=value") do
-        params = @compat Dict("language" => "julia", "result" => "awesome")
+        params = Dict("language" => "julia", "result" => "awesome")
         expected = "language=julia&result=awesome"
         @fact oauth_serialize_url_parameters(params) --> expected
     end
@@ -71,8 +71,8 @@ end
 
 facts("encodeURI!") do
     context("escapes all values in the parameters that are strings") do
-        params   = @compat Dict("iv" => 10, "s" => "value!")
-        expected = @compat Dict("iv" => 10, "s" => "value%21")
+        params   = Dict("iv" => 10, "s" => "value!")
+        expected = Dict("iv" => 10, "s" => "value%21")
 
         @fact encodeURI!(params) --> expected
     end
