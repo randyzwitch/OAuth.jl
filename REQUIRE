@@ -1,5 +1,4 @@
 julia 0.6
-Compat
 FactCheck
 Nettle 0.2
 Requests
