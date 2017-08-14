@@ -1,7 +1,5 @@
 using OAuth
-using Compat
 using FactCheck
-
 
 facts("oauth_timestamp") do
     context("returns a string") do
