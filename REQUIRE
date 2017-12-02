@@ -1,5 +1,4 @@
 julia 0.6
 FactCheck
 Nettle 0.2
-Requests
-URIParser
+HTTP

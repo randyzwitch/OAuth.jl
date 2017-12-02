@@ -2,7 +2,7 @@ __precompile__()
 
 module OAuth
 
-using URIParser, Requests, Nettle
+using HTTP, Nettle
 
 export
 oauth_timestamp,
@@ -19,39 +19,94 @@ oauth_body_hash_encode,
 oauth_header,
 oauth_request_resource
 
+"""
+    oauth_timestamp()
 
-#############################################################
-#
-# OAuth Client Functions
-#
-#############################################################
+Returns current unix timestamp as String.
 
-#Get current timestamp
+# Examples
+```julia-repl
+julia> oauth_timestamp()
+"1512235859"
+```
+"""
 function oauth_timestamp()
     "$(round(Int, time()))"
 end
 
-#Generate random string
+"""
+    oauth_nonce(length::Int)
+
+Returns a random string of a given length.
+
+# Examples
+```julia-repl
+julia> oauth_nonce(10)
+"aQb2FVkrYi"
+```
+"""
 function oauth_nonce(length::Int)
     randstring(length)
 end
 
-#HMAC-SHA1 sign message
-function oauth_sign_hmac_sha1(message::String,signingkey::String)
+"""
+    oauth_sign_hmac_sha1(message::String, signingkey::String)
+
+Takes a message and signing key, converts to a SHA-1 digest, then encodes to base64.
+
+# Examples
+```jldoctest
+julia> oauth_sign_hmac_sha1("foo", "bar")
+"hdFVxV7ShqMAvRzxJN4I2H6RTzo="
+```
+"""
+function oauth_sign_hmac_sha1(message::String, signingkey::String)
     base64encode(digest("sha1", signingkey, message))
 end
 
-#Create signing key
+"""
+    oauth_signing_key(oauth_consumer_secret::String, oauth_token_secret::String)
+
+Returns a signing key based on a consumer secret and token secret.
+
+# Examples
+```jldoctest
+julia> oauth_signing_key("foo", "bar")
+"foo&bar"
+```
+"""
 function oauth_signing_key(oauth_consumer_secret::String, oauth_token_secret::String)
     "$(oauth_consumer_secret)&$(oauth_token_secret)"
 end
 
-#Create signature_base_string
+"""
+    oauth_signature_base_string(httpmethod::String, url::String, parameterstring::String)
+
+Returns encoded HTTP method, url and parameters.
+
+# Examples
+```jldoctest
+julia> oauth_signature_base_string("POST", "https://julialang.org", "foo&bar")
+"POST&https%3A%2F%2Fjulialang.org&foo%26bar"
+```
+"""
 function oauth_signature_base_string(httpmethod::String, url::String, parameterstring::String)
     "$(httpmethod)&$(encodeURI(url))&$(encodeURI(parameterstring))"
 end
 
-#URL-escape keys
+"""
+    oauth_percent_encode_keys!(options::Dict)
+
+Returns dict where keys and values are URL-encoded.
+
+# Examples
+```jldoctest
+julia> oauth_percent_encode_keys!(Dict("key 1" => "value1", "key    2" => "value 2"))
+Dict{String,String} with 2 entries:
+  "key%20%20%20%202" => "value%202"
+  "key%201"          => "value1"
+```
+"""
 function oauth_percent_encode_keys!(options::Dict)
     #options encoded
     originalkeys = collect(keys(options))
@@ -74,15 +129,49 @@ end
     oauth_percent_encode_keys!(options::Dict)
 )
 
-#Create query string from dictionary keys
+"""
+    oauth_serialize_url_parameters(options::Dict)
+
+Returns query string by concatenating dictionary keys/values.
+
+# Examples
+```jldoctest
+julia> bar([1, 2], [1, 2])
+1
+```
+"""
 oauth_serialize_url_parameters(options::Dict) = join(
     ["$key=$(options[key])" for key in sort!(collect(keys(options)))],
     "&"
 )
 
 # See: https://github.com/randyzwitch/OAuth.jl/issues/3
-encodeURI(s) = URIParser.escape(s)
+"""
+    encodeURI(s)
 
+Convenience function for `HTTP.escape`.
+
+# Examples
+```jldoctest
+julia> encodeURI("hello, world!")
+"hello%2C%20world%21"
+```
+"""
+encodeURI(s) = HTTP.escape(s)
+
+"""
+    encodeURI!(dict_of_parameters::Dict)
+
+Mutates dict_of_parameters using `encodeURI` on strings.
+
+# Examples
+```jldoctest
+julia> encodeURI!(Dict("iv" => 10, "s" => "value!"))
+Dict{String,Any} with 2 entries:
+  "iv" => 10
+  "s"  => "value%21"
+```
+"""
 function encodeURI!(dict_of_parameters::Dict)
     for (k, v) in dict_of_parameters
         if typeof(v) <: String
@@ -97,23 +186,60 @@ end
     encodeURI!(dict_of_parameters::Dict)
 )
 
+"""
+    oauth_body_hash_file(filename::String)
+
+Compute the Bar index between `x` and `y`. If `y` is missing, compute
+the Bar index between all pairs of columns of `x`.
+
+# Examples
+```jldoctest
+julia> oauth_body_hash_file(joinpath(dirname(@__FILE__), "auth_body_hash_file.txt"))
+"oauth_body_hash=CgqfKmdylCVXq1NV12r0Qvj2XgE="
+```
+"""
 function oauth_body_hash_file(filename::String)
     oauth_body_hash_data(readstring(open(filename)))
 end
 
+"""
+    oauth_body_hash_data(data::String)
+
+Returns `oauth_body_hash=` along with base64 encoded SHA-1 from input.
+
+# Examples
+```jldoctest
+julia> oauth_body_hash_data("Hello, World!")
+"oauth_body_hash=CgqfKmdylCVXq1NV12r0Qvj2XgE="
+```
+"""
 function oauth_body_hash_data(data::String)
     "oauth_body_hash=$(oauth_body_hash_encode(data))"
 end
 
+"""
+    oauth_body_hash_encode(data::String)
+
+Convenience function for SHA-1 and base64 encoding.
+
+# Examples
+```jldoctest
+julia> oauth_body_hash_encode("julialang")
+"Lsztg2byou89Y8lBoH3G8v3vjbw="
+```
+"""
 function oauth_body_hash_encode(data::String)
         base64encode(digest("SHA1", data))
 end
 
-#Use this function to build the header for every OAuth call
-# This function assumes that options Dict has already been run through encodeURI!
-function oauth_header(httpmethod, baseurl, options, oauth_consumer_key, oauth_consumer_secret, oauth_token, oauth_token_secret;
-                     oauth_signature_method = "HMAC-SHA1",
-                     oauth_version = "1.0")
+"""
+    function oauth_header(httpmethod, baseurl, options, oauth_consumer_key, oauth_consumer_secret, oauth_token, oauth_token_secret; oauth_signature_method = "HMAC-SHA1", oauth_version = "1.0")
+
+Builds OAuth header, defaulting to OAuth 1.0. Function assumes `options` has already
+been run through `encodeURI!`.
+
+"""
+function oauth_header(httpmethod, baseurl, options, oauth_consumer_key, oauth_consumer_secret, oauth_token, oauth_token_secret; oauth_signature_method = "HMAC-SHA1", oauth_version = "1.0")
 
     #keys for parameter string
     options["oauth_consumer_key"] = oauth_consumer_key
@@ -142,9 +268,15 @@ function oauth_header(httpmethod, baseurl, options, oauth_consumer_key, oauth_co
 
 end
 
+"""
+    oauth_request_resource(endpoint::String, httpmethod::String, options::Dict, oauth_consumer_key::String, oauth_consumer_secret::String, oauth_token::String, oauth_token_secret::String)
+
+Makes `GET` or `POST` call to OAuth API.
+
+"""
 function oauth_request_resource(endpoint::String, httpmethod::String, options::Dict, oauth_consumer_key::String, oauth_consumer_secret::String, oauth_token::String, oauth_token_secret::String)
     #Build query string
-    query_str = Requests.format_query_str(options)
+    query_str = HTTP.escape(options)
 
     #Build oauth_header
     oauth_header_val = oauth_header(httpmethod, endpoint, options, oauth_consumer_key, oauth_consumer_secret, oauth_token, oauth_token_secret)
@@ -157,9 +289,9 @@ function oauth_request_resource(endpoint::String, httpmethod::String, options::D
         )
 
     if uppercase(httpmethod) == "POST"
-        return Requests.post(URI(endpoint), query_str; headers = headers)
+        return HTTP.post(endpoint, query_str; headers = headers)
     elseif uppercase(httpmethod) == "GET"
-        return Requests.get(URI("$(endpoint)?$query_str"); headers = headers)
+        return HTTP.get("$(endpoint)?$query_str"; headers = headers)
     end
 end
 
