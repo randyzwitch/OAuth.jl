@@ -1,6 +1,6 @@
 # OAuth
 
-OSX/Linux: [![Build Status](https://travis-ci.org/randyzwitch/OAuth.jl.svg?branch=master)](https://travis-ci.org/randyzwitch/OAuth.jl) <br>
+Linux: [![Build Status](https://travis-ci.org/randyzwitch/OAuth.jl.svg?branch=master)](https://travis-ci.org/randyzwitch/OAuth.jl) <br>
 Windows:
 [![Build status](https://ci.appveyor.com/api/projects/status/lu2jwu1yh464bdm4/branch/master?svg=true)](https://ci.appveyor.com/project/randyzwitch/oauth-jl/branch/master)
 <br>
