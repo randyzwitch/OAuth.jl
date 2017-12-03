@@ -136,8 +136,8 @@ Returns query string by concatenating dictionary keys/values.
 
 # Examples
 ```jldoctest
-julia> bar([1, 2], [1, 2])
-1
+julia> oauth_serialize_url_parameters(Dict("foo" => "bar", "foo 1" => "hello!"))
+"foo=bar&foo 1=hello!"
 ```
 """
 oauth_serialize_url_parameters(options::Dict) = join(
@@ -189,8 +189,7 @@ end
 """
     oauth_body_hash_file(filename::String)
 
-Compute the Bar index between `x` and `y`. If `y` is missing, compute
-the Bar index between all pairs of columns of `x`.
+Returns `oauth_body_hash=` along with base64 encoded SHA-1 from input text file.
 
 # Examples
 ```jldoctest
