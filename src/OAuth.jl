@@ -193,7 +193,7 @@ Returns `oauth_body_hash=` along with base64 encoded SHA-1 from input text file.
 
 # Examples
 ```jldoctest
-julia> oauth_body_hash_file(joinpath(dirname(@__FILE__), "auth_body_hash_file.txt"))
+julia> oauth_body_hash_file(joinpath(Pkg.dir(), "OAuth/test/auth_body_hash_file.txt"))
 "oauth_body_hash=CgqfKmdylCVXq1NV12r0Qvj2XgE="
 ```
 """
