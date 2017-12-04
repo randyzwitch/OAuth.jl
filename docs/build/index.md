@@ -35,7 +35,7 @@ Dict{String,Any} with 2 entries:
 ```
 
 
-<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/142fe5d7a25a7ca5ee09a03932dfc1ad89033c31/src/OAuth.jl#L162-L174' class='documenter-source'>source</a><br>
+<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/65ca9f96238994ccf84202b2ac6467e2a34ac7b6/src/OAuth.jl#L162-L174' class='documenter-source'>source</a><br>
 
 <a id='OAuth.encodeURI-Tuple{Any}' href='#OAuth.encodeURI-Tuple{Any}'>#</a>
 **`OAuth.encodeURI`** &mdash; *Method*.
@@ -56,7 +56,7 @@ julia> encodeURI("hello, world!")
 ```
 
 
-<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/142fe5d7a25a7ca5ee09a03932dfc1ad89033c31/src/OAuth.jl#L149-L159' class='documenter-source'>source</a><br>
+<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/65ca9f96238994ccf84202b2ac6467e2a34ac7b6/src/OAuth.jl#L149-L159' class='documenter-source'>source</a><br>
 
 <a id='OAuth.oauth_body_hash_data-Tuple{String}' href='#OAuth.oauth_body_hash_data-Tuple{String}'>#</a>
 **`OAuth.oauth_body_hash_data`** &mdash; *Method*.
@@ -77,7 +77,7 @@ julia> oauth_body_hash_data("Hello, World!")
 ```
 
 
-<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/142fe5d7a25a7ca5ee09a03932dfc1ad89033c31/src/OAuth.jl#L205-L215' class='documenter-source'>source</a><br>
+<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/65ca9f96238994ccf84202b2ac6467e2a34ac7b6/src/OAuth.jl#L204-L214' class='documenter-source'>source</a><br>
 
 <a id='OAuth.oauth_body_hash_encode-Tuple{String}' href='#OAuth.oauth_body_hash_encode-Tuple{String}'>#</a>
 **`OAuth.oauth_body_hash_encode`** &mdash; *Method*.
@@ -98,7 +98,7 @@ julia> oauth_body_hash_encode("julialang")
 ```
 
 
-<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/142fe5d7a25a7ca5ee09a03932dfc1ad89033c31/src/OAuth.jl#L220-L230' class='documenter-source'>source</a><br>
+<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/65ca9f96238994ccf84202b2ac6467e2a34ac7b6/src/OAuth.jl#L219-L229' class='documenter-source'>source</a><br>
 
 <a id='OAuth.oauth_body_hash_file-Tuple{String}' href='#OAuth.oauth_body_hash_file-Tuple{String}'>#</a>
 **`OAuth.oauth_body_hash_file`** &mdash; *Method*.
@@ -109,17 +109,17 @@ julia> oauth_body_hash_encode("julialang")
 oauth_body_hash_file(filename::String)
 ```
 
-Compute the Bar index between `x` and `y`. If `y` is missing, compute the Bar index between all pairs of columns of `x`.
+Returns `oauth_body_hash=` along with base64 encoded SHA-1 from input text file.
 
 **Examples**
 
 ```julia-repl
-julia> oauth_body_hash_file(joinpath(dirname(@__FILE__), "auth_body_hash_file.txt"))
+julia> oauth_body_hash_file(joinpath(Pkg.dir(), "OAuth/test/auth_body_hash_file.txt"))
 "oauth_body_hash=CgqfKmdylCVXq1NV12r0Qvj2XgE="
 ```
 
 
-<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/142fe5d7a25a7ca5ee09a03932dfc1ad89033c31/src/OAuth.jl#L189-L200' class='documenter-source'>source</a><br>
+<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/65ca9f96238994ccf84202b2ac6467e2a34ac7b6/src/OAuth.jl#L189-L199' class='documenter-source'>source</a><br>
 
 <a id='OAuth.oauth_header-NTuple{7,Any}' href='#OAuth.oauth_header-NTuple{7,Any}'>#</a>
 **`OAuth.oauth_header`** &mdash; *Method*.
@@ -133,7 +133,7 @@ function oauth_header(httpmethod, baseurl, options, oauth_consumer_key, oauth_co
 Builds OAuth header, defaulting to OAuth 1.0. Function assumes `options` has already been run through `encodeURI!`.
 
 
-<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/142fe5d7a25a7ca5ee09a03932dfc1ad89033c31/src/OAuth.jl#L235-L241' class='documenter-source'>source</a><br>
+<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/65ca9f96238994ccf84202b2ac6467e2a34ac7b6/src/OAuth.jl#L234-L240' class='documenter-source'>source</a><br>
 
 <a id='OAuth.oauth_nonce-Tuple{Int64}' href='#OAuth.oauth_nonce-Tuple{Int64}'>#</a>
 **`OAuth.oauth_nonce`** &mdash; *Method*.
@@ -154,7 +154,7 @@ julia> oauth_nonce(10)
 ```
 
 
-<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/142fe5d7a25a7ca5ee09a03932dfc1ad89033c31/src/OAuth.jl#L37-L47' class='documenter-source'>source</a><br>
+<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/65ca9f96238994ccf84202b2ac6467e2a34ac7b6/src/OAuth.jl#L37-L47' class='documenter-source'>source</a><br>
 
 <a id='OAuth.oauth_percent_encode_keys!-Tuple{Dict}' href='#OAuth.oauth_percent_encode_keys!-Tuple{Dict}'>#</a>
 **`OAuth.oauth_percent_encode_keys!`** &mdash; *Method*.
@@ -177,7 +177,7 @@ Dict{String,String} with 2 entries:
 ```
 
 
-<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/142fe5d7a25a7ca5ee09a03932dfc1ad89033c31/src/OAuth.jl#L97-L109' class='documenter-source'>source</a><br>
+<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/65ca9f96238994ccf84202b2ac6467e2a34ac7b6/src/OAuth.jl#L97-L109' class='documenter-source'>source</a><br>
 
 <a id='OAuth.oauth_request_resource-Tuple{String,String,Dict,String,String,String,String}' href='#OAuth.oauth_request_resource-Tuple{String,String,Dict,String,String,String,String}'>#</a>
 **`OAuth.oauth_request_resource`** &mdash; *Method*.
@@ -191,7 +191,7 @@ oauth_request_resource(endpoint::String, httpmethod::String, options::Dict, oaut
 Makes `GET` or `POST` call to OAuth API.
 
 
-<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/142fe5d7a25a7ca5ee09a03932dfc1ad89033c31/src/OAuth.jl#L271-L276' class='documenter-source'>source</a><br>
+<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/65ca9f96238994ccf84202b2ac6467e2a34ac7b6/src/OAuth.jl#L270-L275' class='documenter-source'>source</a><br>
 
 <a id='OAuth.oauth_serialize_url_parameters-Tuple{Dict}' href='#OAuth.oauth_serialize_url_parameters-Tuple{Dict}'>#</a>
 **`OAuth.oauth_serialize_url_parameters`** &mdash; *Method*.
@@ -207,12 +207,12 @@ Returns query string by concatenating dictionary keys/values.
 **Examples**
 
 ```julia-repl
-julia> bar([1, 2], [1, 2])
-1
+julia> oauth_serialize_url_parameters(Dict("foo" => "bar", "foo 1" => "hello!"))
+"foo=bar&foo 1=hello!"
 ```
 
 
-<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/142fe5d7a25a7ca5ee09a03932dfc1ad89033c31/src/OAuth.jl#L132-L142' class='documenter-source'>source</a><br>
+<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/65ca9f96238994ccf84202b2ac6467e2a34ac7b6/src/OAuth.jl#L132-L142' class='documenter-source'>source</a><br>
 
 <a id='OAuth.oauth_sign_hmac_sha1-Tuple{String,String}' href='#OAuth.oauth_sign_hmac_sha1-Tuple{String,String}'>#</a>
 **`OAuth.oauth_sign_hmac_sha1`** &mdash; *Method*.
@@ -233,7 +233,7 @@ julia> oauth_sign_hmac_sha1("foo", "bar")
 ```
 
 
-<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/142fe5d7a25a7ca5ee09a03932dfc1ad89033c31/src/OAuth.jl#L52-L62' class='documenter-source'>source</a><br>
+<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/65ca9f96238994ccf84202b2ac6467e2a34ac7b6/src/OAuth.jl#L52-L62' class='documenter-source'>source</a><br>
 
 <a id='OAuth.oauth_signature_base_string-Tuple{String,String,String}' href='#OAuth.oauth_signature_base_string-Tuple{String,String,String}'>#</a>
 **`OAuth.oauth_signature_base_string`** &mdash; *Method*.
@@ -254,7 +254,7 @@ julia> oauth_signature_base_string("POST", "https://julialang.org", "foo&bar")
 ```
 
 
-<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/142fe5d7a25a7ca5ee09a03932dfc1ad89033c31/src/OAuth.jl#L82-L92' class='documenter-source'>source</a><br>
+<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/65ca9f96238994ccf84202b2ac6467e2a34ac7b6/src/OAuth.jl#L82-L92' class='documenter-source'>source</a><br>
 
 <a id='OAuth.oauth_signing_key-Tuple{String,String}' href='#OAuth.oauth_signing_key-Tuple{String,String}'>#</a>
 **`OAuth.oauth_signing_key`** &mdash; *Method*.
@@ -275,7 +275,7 @@ julia> oauth_signing_key("foo", "bar")
 ```
 
 
-<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/142fe5d7a25a7ca5ee09a03932dfc1ad89033c31/src/OAuth.jl#L67-L77' class='documenter-source'>source</a><br>
+<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/65ca9f96238994ccf84202b2ac6467e2a34ac7b6/src/OAuth.jl#L67-L77' class='documenter-source'>source</a><br>
 
 <a id='OAuth.oauth_timestamp-Tuple{}' href='#OAuth.oauth_timestamp-Tuple{}'>#</a>
 **`OAuth.oauth_timestamp`** &mdash; *Method*.
@@ -296,7 +296,7 @@ julia> oauth_timestamp()
 ```
 
 
-<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/142fe5d7a25a7ca5ee09a03932dfc1ad89033c31/src/OAuth.jl#L22-L32' class='documenter-source'>source</a><br>
+<a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/65ca9f96238994ccf84202b2ac6467e2a34ac7b6/src/OAuth.jl#L22-L32' class='documenter-source'>source</a><br>
 
 
 <a id='Index-1'></a>
