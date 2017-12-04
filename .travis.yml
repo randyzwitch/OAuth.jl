@@ -10,3 +10,5 @@ script:
     - julia -e 'Pkg.clone(pwd()); Pkg.test("OAuth"; coverage=true)'
 after_success:
   - julia -e 'cd(Pkg.dir("OAuth")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder()); Codecov.submit(process_folder())'
+  - julia -e 'Pkg.add("Documenter")'
+  - julia -e 'cd(Pkg.dir("OAuth")); include(joinpath("docs", "make.jl"))'
