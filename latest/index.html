@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Pure Julia implementation of OAuth v1.0a">
+  <meta name="author" content="randyzwitch">
+  <link rel="shortcut icon" href="./img/favicon.ico">
+  <title>Home - OAuth.jl</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="./css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="./css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="./css/highlight.css">
+  <link href="./assets/Documenter.css" rel="stylesheet">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Home";
+    var mkdocs_page_input_path = "index.md";
+    var mkdocs_page_url = "/";
+  </script>
+  
+  <script src="./js/jquery-2.1.1.min.js"></script>
+  <script src="./js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="./js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="." class="icon icon-home"> OAuth.jl</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href=".">Home</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#oauthjl-documentation">OAuth.jl Documentation</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#functions">Functions</a></li>
+        
+            <li><a class="toctree-l3" href="#index">Index</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href=".">OAuth.jl</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Home</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/randyzwitch/OAuth.jl/edit/master/docs/index.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <p><a id='OAuth.jl-Documentation-1'></a></p>
+<h1 id="oauthjl-documentation">OAuth.jl Documentation</h1>
+<ul>
+<li><a href=".#OAuth.jl-Documentation-1">OAuth.jl Documentation</a><ul>
+<li><a href=".#Functions-1">Functions</a></li>
+<li><a href=".#Index-1">Index</a></li>
+</ul>
+</li>
+</ul>
+<p><a id='Functions-1'></a></p>
+<h2 id="functions">Functions</h2>
+<p><a id='OAuth.encodeURI!-Tuple{Dict}' href='#OAuth.encodeURI!-Tuple{Dict}'>#</a>
+<strong><code>OAuth.encodeURI!</code></strong> &mdash; <em>Method</em>.</p>
+<pre><code>encodeURI!(dict_of_parameters::Dict)
+</code></pre>
+
+<p>Mutates dict_of_parameters using <code>encodeURI</code> on strings.</p>
+<p><strong>Examples</strong></p>
+<pre><code class="julia-repl">julia&gt; encodeURI!(Dict(&quot;iv&quot; =&gt; 10, &quot;s&quot; =&gt; &quot;value!&quot;))
+Dict{String,Any} with 2 entries:
+  &quot;iv&quot; =&gt; 10
+  &quot;s&quot;  =&gt; &quot;value%21&quot;
+</code></pre>
+
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/f17bfbc2ccf1c302797509b32693075591607400/src/OAuth.jl#L162-L174' class='documenter-source'>source</a><br></p>
+<p><a id='OAuth.encodeURI-Tuple{Any}' href='#OAuth.encodeURI-Tuple{Any}'>#</a>
+<strong><code>OAuth.encodeURI</code></strong> &mdash; <em>Method</em>.</p>
+<pre><code>encodeURI(s)
+</code></pre>
+
+<p>Convenience function for <code>HTTP.escape</code>.</p>
+<p><strong>Examples</strong></p>
+<pre><code class="julia-repl">julia&gt; encodeURI(&quot;hello, world!&quot;)
+&quot;hello%2C%20world%21&quot;
+</code></pre>
+
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/f17bfbc2ccf1c302797509b32693075591607400/src/OAuth.jl#L149-L159' class='documenter-source'>source</a><br></p>
+<p><a id='OAuth.oauth_body_hash_data-Tuple{String}' href='#OAuth.oauth_body_hash_data-Tuple{String}'>#</a>
+<strong><code>OAuth.oauth_body_hash_data</code></strong> &mdash; <em>Method</em>.</p>
+<pre><code>oauth_body_hash_data(data::String)
+</code></pre>
+
+<p>Returns <code>oauth_body_hash=</code> along with base64 encoded SHA-1 from input.</p>
+<p><strong>Examples</strong></p>
+<pre><code class="julia-repl">julia&gt; oauth_body_hash_data(&quot;Hello, World!&quot;)
+&quot;oauth_body_hash=CgqfKmdylCVXq1NV12r0Qvj2XgE=&quot;
+</code></pre>
+
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/f17bfbc2ccf1c302797509b32693075591607400/src/OAuth.jl#L204-L214' class='documenter-source'>source</a><br></p>
+<p><a id='OAuth.oauth_body_hash_encode-Tuple{String}' href='#OAuth.oauth_body_hash_encode-Tuple{String}'>#</a>
+<strong><code>OAuth.oauth_body_hash_encode</code></strong> &mdash; <em>Method</em>.</p>
+<pre><code>oauth_body_hash_encode(data::String)
+</code></pre>
+
+<p>Convenience function for SHA-1 and base64 encoding.</p>
+<p><strong>Examples</strong></p>
+<pre><code class="julia-repl">julia&gt; oauth_body_hash_encode(&quot;julialang&quot;)
+&quot;Lsztg2byou89Y8lBoH3G8v3vjbw=&quot;
+</code></pre>
+
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/f17bfbc2ccf1c302797509b32693075591607400/src/OAuth.jl#L219-L229' class='documenter-source'>source</a><br></p>
+<p><a id='OAuth.oauth_body_hash_file-Tuple{String}' href='#OAuth.oauth_body_hash_file-Tuple{String}'>#</a>
+<strong><code>OAuth.oauth_body_hash_file</code></strong> &mdash; <em>Method</em>.</p>
+<pre><code>oauth_body_hash_file(filename::String)
+</code></pre>
+
+<p>Returns <code>oauth_body_hash=</code> along with base64 encoded SHA-1 from input text file.</p>
+<p><strong>Examples</strong></p>
+<pre><code class="julia-repl">julia&gt; oauth_body_hash_file(joinpath(Pkg.dir(), &quot;OAuth/test/auth_body_hash_file.txt&quot;))
+&quot;oauth_body_hash=CgqfKmdylCVXq1NV12r0Qvj2XgE=&quot;
+</code></pre>
+
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/f17bfbc2ccf1c302797509b32693075591607400/src/OAuth.jl#L189-L199' class='documenter-source'>source</a><br></p>
+<p><a id='OAuth.oauth_header-NTuple{7,Any}' href='#OAuth.oauth_header-NTuple{7,Any}'>#</a>
+<strong><code>OAuth.oauth_header</code></strong> &mdash; <em>Method</em>.</p>
+<pre><code>function oauth_header(httpmethod, baseurl, options, oauth_consumer_key, oauth_consumer_secret, oauth_token, oauth_token_secret; oauth_signature_method = &quot;HMAC-SHA1&quot;, oauth_version = &quot;1.0&quot;)
+</code></pre>
+
+<p>Builds OAuth header, defaulting to OAuth 1.0. Function assumes <code>options</code> has already been run through <code>encodeURI!</code>.</p>
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/f17bfbc2ccf1c302797509b32693075591607400/src/OAuth.jl#L234-L240' class='documenter-source'>source</a><br></p>
+<p><a id='OAuth.oauth_nonce-Tuple{Int64}' href='#OAuth.oauth_nonce-Tuple{Int64}'>#</a>
+<strong><code>OAuth.oauth_nonce</code></strong> &mdash; <em>Method</em>.</p>
+<pre><code>oauth_nonce(length::Int)
+</code></pre>
+
+<p>Returns a random string of a given length.</p>
+<p><strong>Examples</strong></p>
+<pre><code class="julia-repl">julia&gt; oauth_nonce(10)
+&quot;aQb2FVkrYi&quot;
+</code></pre>
+
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/f17bfbc2ccf1c302797509b32693075591607400/src/OAuth.jl#L37-L47' class='documenter-source'>source</a><br></p>
+<p><a id='OAuth.oauth_percent_encode_keys!-Tuple{Dict}' href='#OAuth.oauth_percent_encode_keys!-Tuple{Dict}'>#</a>
+<strong><code>OAuth.oauth_percent_encode_keys!</code></strong> &mdash; <em>Method</em>.</p>
+<pre><code>oauth_percent_encode_keys!(options::Dict)
+</code></pre>
+
+<p>Returns dict where keys and values are URL-encoded.</p>
+<p><strong>Examples</strong></p>
+<pre><code class="julia-repl">julia&gt; oauth_percent_encode_keys!(Dict(&quot;key 1&quot; =&gt; &quot;value1&quot;, &quot;key    2&quot; =&gt; &quot;value 2&quot;))
+Dict{String,String} with 2 entries:
+  &quot;key%20%20%20%202&quot; =&gt; &quot;value%202&quot;
+  &quot;key%201&quot;          =&gt; &quot;value1&quot;
+</code></pre>
+
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/f17bfbc2ccf1c302797509b32693075591607400/src/OAuth.jl#L97-L109' class='documenter-source'>source</a><br></p>
+<p><a id='OAuth.oauth_request_resource-Tuple{String,String,Dict,String,String,String,String}' href='#OAuth.oauth_request_resource-Tuple{String,String,Dict,String,String,String,String}'>#</a>
+<strong><code>OAuth.oauth_request_resource</code></strong> &mdash; <em>Method</em>.</p>
+<pre><code>oauth_request_resource(endpoint::String, httpmethod::String, options::Dict, oauth_consumer_key::String, oauth_consumer_secret::String, oauth_token::String, oauth_token_secret::String)
+</code></pre>
+
+<p>Makes <code>GET</code> or <code>POST</code> call to OAuth API.</p>
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/f17bfbc2ccf1c302797509b32693075591607400/src/OAuth.jl#L270-L275' class='documenter-source'>source</a><br></p>
+<p><a id='OAuth.oauth_serialize_url_parameters-Tuple{Dict}' href='#OAuth.oauth_serialize_url_parameters-Tuple{Dict}'>#</a>
+<strong><code>OAuth.oauth_serialize_url_parameters</code></strong> &mdash; <em>Method</em>.</p>
+<pre><code>oauth_serialize_url_parameters(options::Dict)
+</code></pre>
+
+<p>Returns query string by concatenating dictionary keys/values.</p>
+<p><strong>Examples</strong></p>
+<pre><code class="julia-repl">julia&gt; oauth_serialize_url_parameters(Dict(&quot;foo&quot; =&gt; &quot;bar&quot;, &quot;foo 1&quot; =&gt; &quot;hello!&quot;))
+&quot;foo=bar&amp;foo 1=hello!&quot;
+</code></pre>
+
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/f17bfbc2ccf1c302797509b32693075591607400/src/OAuth.jl#L132-L142' class='documenter-source'>source</a><br></p>
+<p><a id='OAuth.oauth_sign_hmac_sha1-Tuple{String,String}' href='#OAuth.oauth_sign_hmac_sha1-Tuple{String,String}'>#</a>
+<strong><code>OAuth.oauth_sign_hmac_sha1</code></strong> &mdash; <em>Method</em>.</p>
+<pre><code>oauth_sign_hmac_sha1(message::String, signingkey::String)
+</code></pre>
+
+<p>Takes a message and signing key, converts to a SHA-1 digest, then encodes to base64.</p>
+<p><strong>Examples</strong></p>
+<pre><code class="julia-repl">julia&gt; oauth_sign_hmac_sha1(&quot;foo&quot;, &quot;bar&quot;)
+&quot;hdFVxV7ShqMAvRzxJN4I2H6RTzo=&quot;
+</code></pre>
+
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/f17bfbc2ccf1c302797509b32693075591607400/src/OAuth.jl#L52-L62' class='documenter-source'>source</a><br></p>
+<p><a id='OAuth.oauth_signature_base_string-Tuple{String,String,String}' href='#OAuth.oauth_signature_base_string-Tuple{String,String,String}'>#</a>
+<strong><code>OAuth.oauth_signature_base_string</code></strong> &mdash; <em>Method</em>.</p>
+<pre><code>oauth_signature_base_string(httpmethod::String, url::String, parameterstring::String)
+</code></pre>
+
+<p>Returns encoded HTTP method, url and parameters.</p>
+<p><strong>Examples</strong></p>
+<pre><code class="julia-repl">julia&gt; oauth_signature_base_string(&quot;POST&quot;, &quot;https://julialang.org&quot;, &quot;foo&amp;bar&quot;)
+&quot;POST&amp;https%3A%2F%2Fjulialang.org&amp;foo%26bar&quot;
+</code></pre>
+
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/f17bfbc2ccf1c302797509b32693075591607400/src/OAuth.jl#L82-L92' class='documenter-source'>source</a><br></p>
+<p><a id='OAuth.oauth_signing_key-Tuple{String,String}' href='#OAuth.oauth_signing_key-Tuple{String,String}'>#</a>
+<strong><code>OAuth.oauth_signing_key</code></strong> &mdash; <em>Method</em>.</p>
+<pre><code>oauth_signing_key(oauth_consumer_secret::String, oauth_token_secret::String)
+</code></pre>
+
+<p>Returns a signing key based on a consumer secret and token secret.</p>
+<p><strong>Examples</strong></p>
+<pre><code class="julia-repl">julia&gt; oauth_signing_key(&quot;foo&quot;, &quot;bar&quot;)
+&quot;foo&amp;bar&quot;
+</code></pre>
+
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/f17bfbc2ccf1c302797509b32693075591607400/src/OAuth.jl#L67-L77' class='documenter-source'>source</a><br></p>
+<p><a id='OAuth.oauth_timestamp-Tuple{}' href='#OAuth.oauth_timestamp-Tuple{}'>#</a>
+<strong><code>OAuth.oauth_timestamp</code></strong> &mdash; <em>Method</em>.</p>
+<pre><code>oauth_timestamp()
+</code></pre>
+
+<p>Returns current unix timestamp as String.</p>
+<p><strong>Examples</strong></p>
+<pre><code class="julia-repl">julia&gt; oauth_timestamp()
+&quot;1512235859&quot;
+</code></pre>
+
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/f17bfbc2ccf1c302797509b32693075591607400/src/OAuth.jl#L22-L32' class='documenter-source'>source</a><br></p>
+<p><a id='Index-1'></a></p>
+<h2 id="index">Index</h2>
+<ul>
+<li><a href=".#OAuth.encodeURI-Tuple{Any}"><code>OAuth.encodeURI</code></a></li>
+<li><a href=".#OAuth.encodeURI!-Tuple{Dict}"><code>OAuth.encodeURI!</code></a></li>
+<li><a href=".#OAuth.oauth_body_hash_data-Tuple{String}"><code>OAuth.oauth_body_hash_data</code></a></li>
+<li><a href=".#OAuth.oauth_body_hash_encode-Tuple{String}"><code>OAuth.oauth_body_hash_encode</code></a></li>
+<li><a href=".#OAuth.oauth_body_hash_file-Tuple{String}"><code>OAuth.oauth_body_hash_file</code></a></li>
+<li><a href=".#OAuth.oauth_header-NTuple{7,Any}"><code>OAuth.oauth_header</code></a></li>
+<li><a href=".#OAuth.oauth_nonce-Tuple{Int64}"><code>OAuth.oauth_nonce</code></a></li>
+<li><a href=".#OAuth.oauth_percent_encode_keys!-Tuple{Dict}"><code>OAuth.oauth_percent_encode_keys!</code></a></li>
+<li><a href=".#OAuth.oauth_request_resource-Tuple{String,String,Dict,String,String,String,String}"><code>OAuth.oauth_request_resource</code></a></li>
+<li><a href=".#OAuth.oauth_serialize_url_parameters-Tuple{Dict}"><code>OAuth.oauth_serialize_url_parameters</code></a></li>
+<li><a href=".#OAuth.oauth_sign_hmac_sha1-Tuple{String,String}"><code>OAuth.oauth_sign_hmac_sha1</code></a></li>
+<li><a href=".#OAuth.oauth_signature_base_string-Tuple{String,String,String}"><code>OAuth.oauth_signature_base_string</code></a></li>
+<li><a href=".#OAuth.oauth_signing_key-Tuple{String,String}"><code>OAuth.oauth_signing_key</code></a></li>
+<li><a href=".#OAuth.oauth_timestamp-Tuple{}"><code>OAuth.oauth_timestamp</code></a></li>
+</ul>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/randyzwitch/OAuth.jl/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+      
+    </span>
+</div>
+    <script>var base_url = '.';</script>
+    <script src="./js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+      <script src="./assets/mathjaxhelper.js"></script>
+      <script src="./search/require.js"></script>
+      <script src="./search/search.js"></script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 0.17.2
+Build Date UTC : 2017-12-04 00:55:09
+-->
