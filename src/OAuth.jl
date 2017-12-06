@@ -288,7 +288,7 @@ function oauth_request_resource(endpoint::String, httpmethod::String, options::D
         )
 
     if uppercase(httpmethod) == "POST"
-        return HTTP.post(endpoint, query_str; headers = headers)
+        return HTTP.post(endpoint; body = query_str, headers = headers)
     elseif uppercase(httpmethod) == "GET"
         return HTTP.get("$(endpoint)?$query_str"; headers = headers)
     end
