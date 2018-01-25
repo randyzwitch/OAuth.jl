@@ -27,7 +27,7 @@ end
 
 facts("oauth_sign_hmac_sha1") do
     context("provides a consistent string") do
-        expected = "WqKCG5iyhFiES3fWYVdWJWwinaY="
+        expected = "dR8PcWvTl2FyvVM417iTe/p1XV8="
         @fact oauth_sign_hmac_sha1("randy", "zwitch") --> expected
     end
 end
