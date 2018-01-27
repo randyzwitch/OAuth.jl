@@ -124,19 +124,19 @@ Dict{String,Any} with 2 entries:
   &quot;s&quot;  =&gt; &quot;value%21&quot;
 </code></pre>
 
-<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/1deaf190a4169056c49fb2e8244382e826c63206/src/OAuth.jl#L162-L174' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/9c52a254f48502841159657b9f74bd22fd583880/src/OAuth.jl#L162-L174' class='documenter-source'>source</a><br></p>
 <p><a id='OAuth.encodeURI-Tuple{Any}' href='#OAuth.encodeURI-Tuple{Any}'>#</a>
 <strong><code>OAuth.encodeURI</code></strong> &mdash; <em>Method</em>.</p>
 <pre><code>encodeURI(s)
 </code></pre>
 
-<p>Convenience function for <code>HTTP.escape</code>.</p>
+<p>Convenience function for <code>HTTP.escapeuri</code>.</p>
 <p><strong>Examples</strong></p>
 <pre><code class="julia-repl">julia&gt; encodeURI(&quot;hello, world!&quot;)
 &quot;hello%2C%20world%21&quot;
 </code></pre>
 
-<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/1deaf190a4169056c49fb2e8244382e826c63206/src/OAuth.jl#L149-L159' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/9c52a254f48502841159657b9f74bd22fd583880/src/OAuth.jl#L149-L159' class='documenter-source'>source</a><br></p>
 <p><a id='OAuth.oauth_body_hash_data-Tuple{String}' href='#OAuth.oauth_body_hash_data-Tuple{String}'>#</a>
 <strong><code>OAuth.oauth_body_hash_data</code></strong> &mdash; <em>Method</em>.</p>
 <pre><code>oauth_body_hash_data(data::String)
@@ -148,7 +148,7 @@ Dict{String,Any} with 2 entries:
 &quot;oauth_body_hash=CgqfKmdylCVXq1NV12r0Qvj2XgE=&quot;
 </code></pre>
 
-<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/1deaf190a4169056c49fb2e8244382e826c63206/src/OAuth.jl#L204-L214' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/9c52a254f48502841159657b9f74bd22fd583880/src/OAuth.jl#L204-L214' class='documenter-source'>source</a><br></p>
 <p><a id='OAuth.oauth_body_hash_encode-Tuple{String}' href='#OAuth.oauth_body_hash_encode-Tuple{String}'>#</a>
 <strong><code>OAuth.oauth_body_hash_encode</code></strong> &mdash; <em>Method</em>.</p>
 <pre><code>oauth_body_hash_encode(data::String)
@@ -160,7 +160,7 @@ Dict{String,Any} with 2 entries:
 &quot;Lsztg2byou89Y8lBoH3G8v3vjbw=&quot;
 </code></pre>
 
-<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/1deaf190a4169056c49fb2e8244382e826c63206/src/OAuth.jl#L219-L229' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/9c52a254f48502841159657b9f74bd22fd583880/src/OAuth.jl#L219-L229' class='documenter-source'>source</a><br></p>
 <p><a id='OAuth.oauth_body_hash_file-Tuple{String}' href='#OAuth.oauth_body_hash_file-Tuple{String}'>#</a>
 <strong><code>OAuth.oauth_body_hash_file</code></strong> &mdash; <em>Method</em>.</p>
 <pre><code>oauth_body_hash_file(filename::String)
@@ -172,14 +172,14 @@ Dict{String,Any} with 2 entries:
 &quot;oauth_body_hash=CgqfKmdylCVXq1NV12r0Qvj2XgE=&quot;
 </code></pre>
 
-<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/1deaf190a4169056c49fb2e8244382e826c63206/src/OAuth.jl#L189-L199' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/9c52a254f48502841159657b9f74bd22fd583880/src/OAuth.jl#L189-L199' class='documenter-source'>source</a><br></p>
 <p><a id='OAuth.oauth_header-NTuple{7,Any}' href='#OAuth.oauth_header-NTuple{7,Any}'>#</a>
 <strong><code>OAuth.oauth_header</code></strong> &mdash; <em>Method</em>.</p>
 <pre><code>function oauth_header(httpmethod, baseurl, options, oauth_consumer_key, oauth_consumer_secret, oauth_token, oauth_token_secret; oauth_signature_method = &quot;HMAC-SHA1&quot;, oauth_version = &quot;1.0&quot;)
 </code></pre>
 
 <p>Builds OAuth header, defaulting to OAuth 1.0. Function assumes <code>options</code> has already been run through <code>encodeURI!</code>.</p>
-<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/1deaf190a4169056c49fb2e8244382e826c63206/src/OAuth.jl#L234-L240' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/9c52a254f48502841159657b9f74bd22fd583880/src/OAuth.jl#L234-L240' class='documenter-source'>source</a><br></p>
 <p><a id='OAuth.oauth_nonce-Tuple{Int64}' href='#OAuth.oauth_nonce-Tuple{Int64}'>#</a>
 <strong><code>OAuth.oauth_nonce</code></strong> &mdash; <em>Method</em>.</p>
 <pre><code>oauth_nonce(length::Int)
@@ -191,7 +191,7 @@ Dict{String,Any} with 2 entries:
 &quot;aQb2FVkrYi&quot;
 </code></pre>
 
-<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/1deaf190a4169056c49fb2e8244382e826c63206/src/OAuth.jl#L37-L47' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/9c52a254f48502841159657b9f74bd22fd583880/src/OAuth.jl#L37-L47' class='documenter-source'>source</a><br></p>
 <p><a id='OAuth.oauth_percent_encode_keys!-Tuple{Dict}' href='#OAuth.oauth_percent_encode_keys!-Tuple{Dict}'>#</a>
 <strong><code>OAuth.oauth_percent_encode_keys!</code></strong> &mdash; <em>Method</em>.</p>
 <pre><code>oauth_percent_encode_keys!(options::Dict)
@@ -205,14 +205,14 @@ Dict{String,String} with 2 entries:
   &quot;key%201&quot;          =&gt; &quot;value1&quot;
 </code></pre>
 
-<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/1deaf190a4169056c49fb2e8244382e826c63206/src/OAuth.jl#L97-L109' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/9c52a254f48502841159657b9f74bd22fd583880/src/OAuth.jl#L97-L109' class='documenter-source'>source</a><br></p>
 <p><a id='OAuth.oauth_request_resource-Tuple{String,String,Dict,String,String,String,String}' href='#OAuth.oauth_request_resource-Tuple{String,String,Dict,String,String,String,String}'>#</a>
 <strong><code>OAuth.oauth_request_resource</code></strong> &mdash; <em>Method</em>.</p>
 <pre><code>oauth_request_resource(endpoint::String, httpmethod::String, options::Dict, oauth_consumer_key::String, oauth_consumer_secret::String, oauth_token::String, oauth_token_secret::String)
 </code></pre>
 
 <p>Makes <code>GET</code> or <code>POST</code> call to OAuth API.</p>
-<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/1deaf190a4169056c49fb2e8244382e826c63206/src/OAuth.jl#L270-L275' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/9c52a254f48502841159657b9f74bd22fd583880/src/OAuth.jl#L270-L275' class='documenter-source'>source</a><br></p>
 <p><a id='OAuth.oauth_serialize_url_parameters-Tuple{Dict}' href='#OAuth.oauth_serialize_url_parameters-Tuple{Dict}'>#</a>
 <strong><code>OAuth.oauth_serialize_url_parameters</code></strong> &mdash; <em>Method</em>.</p>
 <pre><code>oauth_serialize_url_parameters(options::Dict)
@@ -224,7 +224,7 @@ Dict{String,String} with 2 entries:
 &quot;foo=bar&amp;foo 1=hello!&quot;
 </code></pre>
 
-<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/1deaf190a4169056c49fb2e8244382e826c63206/src/OAuth.jl#L132-L142' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/9c52a254f48502841159657b9f74bd22fd583880/src/OAuth.jl#L132-L142' class='documenter-source'>source</a><br></p>
 <p><a id='OAuth.oauth_sign_hmac_sha1-Tuple{String,String}' href='#OAuth.oauth_sign_hmac_sha1-Tuple{String,String}'>#</a>
 <strong><code>OAuth.oauth_sign_hmac_sha1</code></strong> &mdash; <em>Method</em>.</p>
 <pre><code>oauth_sign_hmac_sha1(message::String, signingkey::String)
@@ -236,7 +236,7 @@ Dict{String,String} with 2 entries:
 &quot;hdFVxV7ShqMAvRzxJN4I2H6RTzo=&quot;
 </code></pre>
 
-<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/1deaf190a4169056c49fb2e8244382e826c63206/src/OAuth.jl#L52-L62' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/9c52a254f48502841159657b9f74bd22fd583880/src/OAuth.jl#L52-L62' class='documenter-source'>source</a><br></p>
 <p><a id='OAuth.oauth_signature_base_string-Tuple{String,String,String}' href='#OAuth.oauth_signature_base_string-Tuple{String,String,String}'>#</a>
 <strong><code>OAuth.oauth_signature_base_string</code></strong> &mdash; <em>Method</em>.</p>
 <pre><code>oauth_signature_base_string(httpmethod::String, url::String, parameterstring::String)
@@ -248,7 +248,7 @@ Dict{String,String} with 2 entries:
 &quot;POST&amp;https%3A%2F%2Fjulialang.org&amp;foo%26bar&quot;
 </code></pre>
 
-<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/1deaf190a4169056c49fb2e8244382e826c63206/src/OAuth.jl#L82-L92' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/9c52a254f48502841159657b9f74bd22fd583880/src/OAuth.jl#L82-L92' class='documenter-source'>source</a><br></p>
 <p><a id='OAuth.oauth_signing_key-Tuple{String,String}' href='#OAuth.oauth_signing_key-Tuple{String,String}'>#</a>
 <strong><code>OAuth.oauth_signing_key</code></strong> &mdash; <em>Method</em>.</p>
 <pre><code>oauth_signing_key(oauth_consumer_secret::String, oauth_token_secret::String)
@@ -260,7 +260,7 @@ Dict{String,String} with 2 entries:
 &quot;foo&amp;bar&quot;
 </code></pre>
 
-<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/1deaf190a4169056c49fb2e8244382e826c63206/src/OAuth.jl#L67-L77' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/9c52a254f48502841159657b9f74bd22fd583880/src/OAuth.jl#L67-L77' class='documenter-source'>source</a><br></p>
 <p><a id='OAuth.oauth_timestamp-Tuple{}' href='#OAuth.oauth_timestamp-Tuple{}'>#</a>
 <strong><code>OAuth.oauth_timestamp</code></strong> &mdash; <em>Method</em>.</p>
 <pre><code>oauth_timestamp()
@@ -272,7 +272,7 @@ Dict{String,String} with 2 entries:
 &quot;1512235859&quot;
 </code></pre>
 
-<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/1deaf190a4169056c49fb2e8244382e826c63206/src/OAuth.jl#L22-L32' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/randyzwitch/OAuth.jl/blob/9c52a254f48502841159657b9f74bd22fd583880/src/OAuth.jl#L22-L32' class='documenter-source'>source</a><br></p>
 <p><a id='Index-1'></a></p>
 <h2 id="index">Index</h2>
 <ul>
