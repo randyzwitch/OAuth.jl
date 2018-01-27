@@ -149,7 +149,7 @@ oauth_serialize_url_parameters(options::Dict) = join(
 """
     encodeURI(s)
 
-Convenience function for `HTTP.escape`.
+Convenience function for `HTTP.escapeuri`.
 
 # Examples
 ```jldoctest
@@ -157,7 +157,7 @@ julia> encodeURI("hello, world!")
 "hello%2C%20world%21"
 ```
 """
-encodeURI(s) = HTTP.escape(s)
+encodeURI(s) = HTTP.escapeuri(s)
 
 """
     encodeURI!(dict_of_parameters::Dict)
@@ -275,7 +275,7 @@ Makes `GET` or `POST` call to OAuth API.
 """
 function oauth_request_resource(endpoint::String, httpmethod::String, options::Dict, oauth_consumer_key::String, oauth_consumer_secret::String, oauth_token::String, oauth_token_secret::String)
     #Build query string
-    query_str = HTTP.escape(options)
+    query_str = HTTP.escapeuri(options)
 
     #Build oauth_header
     oauth_header_val = oauth_header(httpmethod, endpoint, options, oauth_consumer_key, oauth_consumer_secret, oauth_token, oauth_token_secret)
