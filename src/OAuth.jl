@@ -198,7 +198,7 @@ julia> oauth_body_hash_file(joinpath(Pkg.dir(), "OAuth/test/auth_body_hash_file.
 ```
 """
 function oauth_body_hash_file(filename::String)
-    oauth_body_hash_data(readstring(open(filename)))
+    oauth_body_hash_data(read(open(filename), String))
 end
 
 """
