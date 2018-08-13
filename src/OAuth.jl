@@ -2,7 +2,7 @@ __precompile__()
 
 module OAuth
 
-using HTTP, MbedTLS
+using HTTP, MbedTLS, Base64, Random
 
 export
 oauth_timestamp,
