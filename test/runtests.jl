@@ -13,7 +13,7 @@ using OAuth, Test
 @test length(oauth_nonce(30)) == 30
 @test length(oauth_nonce(32)) == 32
 
-@test oauth_sign_hmac_sha1("randy", "zwitch") == "dR8PcWvTl2FyvVM417iTe/p1XV8="
+@test oauth_sign_hmac_sha1("randy", "zwitch") == "WqKCG5iyhFiES3fWYVdWJWwinaY="
 
 @test oauth_signing_key("9djdj82h48djs9d2", "kkk9d7dh3k39sjv7") == "9djdj82h48djs9d2&kkk9d7dh3k39sjv7"
 

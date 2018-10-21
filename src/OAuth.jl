@@ -2,7 +2,7 @@ __precompile__()
 
 module OAuth
 
-using HTTP, Nettle, Base64, Random
+using HTTP, MbedTLS, Base64, Random
 
 export
 oauth_timestamp,
@@ -61,7 +61,7 @@ julia> oauth_sign_hmac_sha1("foo", "bar")
 ```
 """
 function oauth_sign_hmac_sha1(message::String, signingkey::String)
-    base64encode(digest("sha1", signingkey, message))
+    base64encode(digest(MD_SHA1, message, signingkey))
 end
 
 """
@@ -228,7 +228,7 @@ julia> oauth_body_hash_encode("julialang")
 ```
 """
 function oauth_body_hash_encode(data::String)
-        base64encode(digest("sha1", data))
+        base64encode(digest(MD_SHA1, data))
 end
 
 """
