@@ -61,7 +61,7 @@ julia> oauth_sign_hmac_sha1("foo", "bar")
 ```
 """
 function oauth_sign_hmac_sha1(message::String, signingkey::String)
-    base64encode(digest(MD_SHA1, signingkey, message))
+    base64encode(digest(MD_SHA1, message, signingkey))
 end
 
 """
