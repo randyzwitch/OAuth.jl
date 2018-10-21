@@ -4,7 +4,8 @@ os:
   - linux
 
 julia:
-  - 0.6
+  - 0.7
+  - 1.0
   - nightly
 
 matrix:
@@ -16,7 +17,7 @@ notifications:
 
 script:
     - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-    - julia -e 'Pkg.clone(pwd()); Pkg.test("OAuth"; coverage=true)'
+    - julia -e 'using Pkg;Pkg.clone(pwd()); Pkg.test("OAuth"; coverage=true)'
 
 after_success:
   - julia -e 'cd(Pkg.dir("OAuth")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder()); Codecov.submit(process_folder())'

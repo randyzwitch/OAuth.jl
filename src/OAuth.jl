@@ -2,7 +2,7 @@ __precompile__()
 
 module OAuth
 
-using HTTP, Nettle
+using HTTP, MbedTLS, Base64, Random
 
 export
 oauth_timestamp,
@@ -61,7 +61,7 @@ julia> oauth_sign_hmac_sha1("foo", "bar")
 ```
 """
 function oauth_sign_hmac_sha1(message::String, signingkey::String)
-    base64encode(digest("sha1", signingkey, message))
+    base64encode(digest(MD_SHA1, signingkey, message))
 end
 
 """
@@ -149,7 +149,7 @@ oauth_serialize_url_parameters(options::Dict) = join(
 """
     encodeURI(s)
 
-Convenience function for `HTTP.escape`.
+Convenience function for `HTTP.escapeuri`.
 
 # Examples
 ```jldoctest
@@ -198,7 +198,7 @@ julia> oauth_body_hash_file(joinpath(Pkg.dir(), "OAuth/test/auth_body_hash_file.
 ```
 """
 function oauth_body_hash_file(filename::String)
-    oauth_body_hash_data(readstring(open(filename)))
+    oauth_body_hash_data(read(open(filename), String))
 end
 
 """
@@ -228,7 +228,7 @@ julia> oauth_body_hash_encode("julialang")
 ```
 """
 function oauth_body_hash_encode(data::String)
-        base64encode(digest("SHA1", data))
+        base64encode(digest(MD_SHA1, data))
 end
 
 """
