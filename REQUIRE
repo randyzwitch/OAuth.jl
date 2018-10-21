@@ -1,4 +1,4 @@
 julia 0.6
-FactCheck
-Nettle 0.2
-HTTP
+FactCheck 0.0.0 0.4.3
+Nettle 0.2 0.3
+HTTP 0.0.0 0.6.15
