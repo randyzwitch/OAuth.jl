@@ -1,6 +1,8 @@
 using Documenter, OAuth
 
-makedocs()
+makedocs(
+    sitename = "OAuth.jl"
+)
 
 deploydocs(
     deps = Deps.pip("mkdocs==0.16.3", "python-markdown-math", "mkdocs-bootswatch"),
