@@ -1,9 +1,6 @@
 # OAuth
 
 Linux: [![Build Status](https://travis-ci.org/randyzwitch/OAuth.jl.svg?branch=master)](https://travis-ci.org/randyzwitch/OAuth.jl) <br>
-Windows:
-[![Build status](https://ci.appveyor.com/api/projects/status/lu2jwu1yh464bdm4/branch/master?svg=true)](https://ci.appveyor.com/project/randyzwitch/oauth-jl/branch/master)
-<br>
 Codecov: [![codecov.io](https://codecov.io/github/randyzwitch/OAuth.jl/coverage.svg?branch=master)](https://codecov.io/github/randyzwitch/OAuth.jl?branch=master) <br>
 Documentation:
 [![](https://img.shields.io/badge/docs-latest-blue.svg)](http://randyzwitch.com/OAuth.jl/latest)
