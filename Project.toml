@@ -1,6 +1,6 @@
 name = "OAuth"
 uuid = "22d8b318-f366-56fb-a292-a93f7d76c017"
-version = "0.8.0"
+version = "0.9.0"
 
 [deps]
 Base64 = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
@@ -11,6 +11,7 @@ Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 [compat]
 HTTP = "~0.8.0"
 julia = "1.0"
+MbedTLS = "~0.7.0"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
