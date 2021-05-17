@@ -9,7 +9,7 @@ MbedTLS = "739be429-bea8-5141-9913-cc70e7f3736d"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [compat]
-HTTP = "~0.8.0"
+HTTP = "~0.9.0"
 julia = "1.0"
 MbedTLS = "0.6.0, 0.7.0, 1.0.0"
 
