@@ -1,5 +1,3 @@
-__precompile__()
-
 module OAuth
 
 using HTTP, MbedTLS, Base64, Random
@@ -46,7 +44,7 @@ julia> oauth_nonce(10)
 ```
 """
 function oauth_nonce(length::Int)
-    randstring(length)
+    randstring(Random.RandomDevice(), length)
 end
 
 """
